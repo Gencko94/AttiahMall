@@ -101,7 +101,7 @@ export default function OrderDetailsMobile({
                 <h1 className="text-gray-600">
                   {formatMessage({ id: 'payment-method' })} :
                 </h1>
-                <h1 className="mx-1">K-net</h1>
+                <h1 className="mx-1">Visa</h1>
               </div>
             </div>
             <div className=" text-sm flex flex-col justify-center font-semibold">

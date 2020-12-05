@@ -93,7 +93,7 @@ export default function MiddleSection({
                 <div className=" flex items-center ">
                   <h1>{formatMessage({ id: 'price-before' })} :</h1>
                   <h1 className=" mx-2 text-base italic  line-through text-gray-700">
-                    {data.simple_addons.promotion_price} KD
+                    {data.simple_addons.promotion_price} SAR
                   </h1>{' '}
                 </div>
               )
@@ -102,7 +102,7 @@ export default function MiddleSection({
                   <h1>{formatMessage({ id: 'price-before' })} :</h1>
                   <h1 className=" mx-2 text-base italic  line-through text-gray-700">
                     {data.variation_addons[selectedVariation].promotion_price}{' '}
-                    KD
+                    SAR
                   </h1>{' '}
                 </div>
               )}
@@ -121,7 +121,7 @@ export default function MiddleSection({
                 {data.type === 'simple'
                   ? data.simple_addons.price
                   : data.variation_addons[selectedVariation].price}
-                KD
+                SAR
               </h1>
               <h1 className=" font-normal uppercase  text-gray-700">
                 ({formatMessage({ id: 'vat-inclusive' })})

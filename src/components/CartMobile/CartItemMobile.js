@@ -60,7 +60,7 @@ export default function CartItemMobile({
             {formatMessage({ id: 'in-stock' })}
           </h1>
           <div className="text-red-700 font-bold text-base">
-            {item.price * item.qty} KD
+            {item.price * item.qty} SAR
           </div>
           <div className=" flex items-center ">
             <h1 className=" font-semibold">

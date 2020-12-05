@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useHistory, useLocation } from 'react-router-dom';
-import logo from '../assets/mrg.svg';
+import logo from '../assets/attiah.png';
 import { Formik, useField } from 'formik';
 import * as Yup from 'yup';
 import { useIntl } from 'react-intl';
@@ -42,7 +42,7 @@ const PhoneNumberCustomInput = ({ label, value, name, ...props }) => {
           className=" relative cursor-pointer flex items-center p-1 border-r"
           style={{ width: '74px' }}
         >
-          <span>+965</span>
+          <span>+966</span>
           <BiChevronDown className="mx-1 w-5 h-5" />
           {menuOpen && (
             <div
@@ -50,7 +50,7 @@ const PhoneNumberCustomInput = ({ label, value, name, ...props }) => {
               style={{ width: '74px' }}
             >
               <div className="hover:bg-main-color p-2 hover:text-main-text flex justify-start items-center">
-                +965
+                +966
               </div>
             </div>
           )}
@@ -144,7 +144,7 @@ export default function Login() {
                 src={logo}
                 alt="logo"
                 className=" mb-3"
-                style={{ width: '100px', height: '50px' }}
+                style={{ width: '70px', height: '70px' }}
               />
             </Link>
             <h2 className="text-lg text-center">

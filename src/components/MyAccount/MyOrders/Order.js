@@ -55,7 +55,7 @@ export default function Order({ order }) {
           </div>
           <div className="flex items-center">
             <h1>{formatMessage({ id: 'payment-method' })}:</h1>
-            <h1 className="text-gray-600 mx-1">K-net</h1>
+            <h1 className="text-gray-600 mx-1">Visa</h1>
           </div>
         </motion.div>
         <motion.div layout>

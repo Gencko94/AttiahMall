@@ -77,7 +77,7 @@ export default function Cart() {
   return (
     <Layout>
       <Helmet>
-        <title>Cart | MRG</title>
+        <title>Cart | AttiahMall</title>
       </Helmet>
 
       <div className="px-4 py-2 max-w-default mx-auto">

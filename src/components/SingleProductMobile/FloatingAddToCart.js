@@ -52,7 +52,7 @@ export default function FloatingAddToCart({
           <AiOutlinePlusCircle className={`w-6 h-6 text-blue-700`} />
         </button>
       </div>
-      <div className="p-1 text-center">{quantity * price} KD</div>
+      <div className="p-1 text-center">{quantity * price} SAR</div>
       <button
         onClick={() => {
           if (itemInCart) {

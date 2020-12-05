@@ -1166,9 +1166,9 @@ export default function DataContextProvider({ children }) {
       delivered: true,
       orderDate: '1/1/1970',
       deliveryDate: '2/1/1970',
-      deliveryDestination: 'Hawali',
+      deliveryDestination: 'Riyadh',
       expectedDelivery: null,
-      orderAmount: '3480 KD',
+      orderAmount: '3480 SAR',
       orderItems: [
         {
           id: 14,
@@ -1305,9 +1305,9 @@ export default function DataContextProvider({ children }) {
       delivered: false,
       orderDate: '5/1/1970',
       deliveryDate: null,
-      deliveryDestination: 'Hawali',
+      deliveryDestination: 'Riyadh',
       expectedDelivery: '5/7/1970',
-      orderAmount: '1120 KD',
+      orderAmount: '1120 SAR',
 
       orderItems: [
         {

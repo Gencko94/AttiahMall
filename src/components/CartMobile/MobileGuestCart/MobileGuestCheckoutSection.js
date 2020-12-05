@@ -58,13 +58,13 @@ export default function MobileGuestCheckoutSection({
                 : `${cartItems.length} `}
               {resolvePlural()})
             </h1>
-            <h1>code total here</h1> KD
+            <h1>code total here</h1> SAR
           </div>
           <div className="  flex mb-2 ">
             <h1 className="flex-1 text-gray-900">
               {formatMessage({ id: 'subtotal' })}
             </h1>
-            <h1>code total here</h1> KD
+            <h1>code total here</h1> SAR
           </div>
           <button
             onClick={handleCheckout}

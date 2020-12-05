@@ -55,7 +55,7 @@ export default function SideCartMenuItemMobile({
         </Link>
 
         <h1 className="text-xs rounded p-1 font-bold  bg-gray-200 inline">
-          {item.price * item.qty} KD
+          {item.price * item.qty} SAR
         </h1>
         <div>
           <button

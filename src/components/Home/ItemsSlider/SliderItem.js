@@ -74,7 +74,7 @@ export default function SliderItem({
 
           <div className=" py-2 px-3 flex items-center justify-between">
             <p className="   text-lg font-semibold text-main-color whitespace-no-wrap">
-              50 <span className="text-xs ">KD</span>
+              50 <span className="text-xs ">SAR</span>
             </p>
             <button
               onClick={() => handleBuyOptionsToggle(item.id)}
@@ -96,7 +96,7 @@ export default function SliderItem({
             {/* {data.sale && (
               <p className="text-xs mx-3  line-through text-gray-500  font-bold whitespace-no-wrap">
                 {' '}
-                {data.priceBefore} <span className="font-normal">KD</span>
+                {data.priceBefore} <span className="font-normal">SAR</span>
               </p>
             )} */}
           </div>

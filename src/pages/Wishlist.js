@@ -69,7 +69,7 @@ export default function Wishlist({ userId }) {
   return (
     <Layout>
       <Helmet>
-        <title>Wishlist | MRG</title>
+        <title>Wishlist | AttiahMall</title>
       </Helmet>
       <div className="px-4 py-2 max-w-default mx-auto">
         {authenticationLoading && <CartLoader />}

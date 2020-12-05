@@ -55,7 +55,7 @@ export default function ViewedItemsMobile() {
   return (
     <LayoutMobile>
       <Helmet>
-        <title>Viewed Items | MRG</title>
+        <title>Viewed Items | AttiahMall</title>
       </Helmet>
 
       {isLoading && (

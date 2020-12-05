@@ -221,7 +221,7 @@ const PhoneNumberCustomInput = ({ label, value, name, ...props }) => {
           className="  cursor-pointer flex items-center p-1 border-r"
           style={{ width: '74px' }}
         >
-          <span>+965</span>
+          <span>+966</span>
           <BiChevronDown className="mx-1 w-5 h-5" />
           {menuOpen && (
             <div
@@ -229,7 +229,7 @@ const PhoneNumberCustomInput = ({ label, value, name, ...props }) => {
               style={{ width: '74px' }}
             >
               <div className="hover:bg-main-color p-1 hover:text-main-text flex justify-start items-center">
-                +965
+                +966
               </div>
             </div>
           )}

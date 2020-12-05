@@ -8,10 +8,9 @@ import Categories from '../components/Home/Categories';
 // import PhotoCategories from '../components/Home/PhotoCategories';
 import { useMediaQuery } from 'react-responsive';
 import Layout from '../components/Layout';
-import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { getHomeItems } from '../Queries/Queries';
-import HomeSwiper from '../components/HomeSwiper';
+// import HomeSwiper from '../components/HomeSwiper';
 import StaticSwiper from '../components/Swipers/StaticSwiper';
 import SwiperLoader from '../components/Home/SwiperLoader';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -21,7 +20,6 @@ import SideCartMenuMobile from '../components/SingleProductMobile/SideCartMenuMo
 
 export default function Home() {
   const isTabletOrAbove = useMediaQuery({ query: '(min-width:768px)' });
-  const { locale } = useIntl();
   /**
    * Main Fetch
    */
@@ -73,10 +71,10 @@ export default function Home() {
   return (
     <Layout>
       <Helmet>
-        <title>MRG</title>
+        <title>AttiahMall</title>
         <meta
           name="description"
-          content="MRG is the Kuwait homegrown online marketplace. Buy your favourate fashion, beauty, home appliances"
+          content="AttiahMall is the Saudi homegrown online marketplace. Buy your favourate fashion, beauty, home appliances"
         />
       </Helmet>
       <div

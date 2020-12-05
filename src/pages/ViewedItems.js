@@ -52,7 +52,7 @@ export default function ViewedItems() {
   return (
     <Layout>
       <Helmet>
-        <title>Viewed Items | MRG</title>
+        <title>Viewed Items | AttiahMall</title>
       </Helmet>
       {isLoading && (
         <div className="min-h-screen px-4 py-2 flex items-center justify-center">

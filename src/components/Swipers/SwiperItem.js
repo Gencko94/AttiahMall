@@ -55,7 +55,7 @@ export default function SwiperItem({
 
         <div className=" py-1 px-3 flex items-center justify-between">
           <p className="   text-lg font-semibold text-main-color whitespace-no-wrap">
-            50 <span className="text-xs ">KD</span>
+            50 <span className="text-xs ">SAR</span>
           </p>
           <button
             onClick={() => handleBuyOptionsToggle(item.id)}

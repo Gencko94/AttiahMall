@@ -90,7 +90,7 @@ export default function FeaturedItemsVertical() {
                 fullSymbol={<AiFillStar className="text-red-700" />}
                 className="mr-2 pt-1"
               />
-              <h1 className="text-green-700 font-semibold">{item.price} KD</h1>
+              <h1 className="text-green-700 font-semibold">{item.price} SAR</h1>
             </div>
           </div>
         );

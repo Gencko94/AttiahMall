@@ -14,7 +14,7 @@ export default function MyAccountMobile() {
   return (
     <Layout>
       <Helmet>
-        <title>My Account | MRG</title>
+        <title>My Account | AttiahMall</title>
       </Helmet>
       <div className="relative">
         <MobileTabs />

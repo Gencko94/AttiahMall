@@ -802,12 +802,12 @@ input {
 
 .credentials-language__container {
   position: absolute;
-  top: 20px;
+  top: 26px;
   right: 50px;
 }
 .credentials-back-button__container {
   position: absolute;
-  top: 20px;
+  top: 30px;
   left: 50px;
 }
 .credentials-language__container-mobile {

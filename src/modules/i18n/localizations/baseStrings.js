@@ -133,7 +133,7 @@ const baseStrings = {
   'login-button': 'Login',
   'register-button': 'Create an account',
   'login-welcome-back': 'Welcome Back !',
-  'register-on-mrg': 'Register on MRG ',
+  'register-on-attiah': 'Register on Attiah Mall ',
   'invalid-credentials': 'Phone number or password are not correct',
   'new-to-family': 'Are you new to the family ? ',
   'join-us-here': 'Join us here',
@@ -163,7 +163,7 @@ const baseStrings = {
   'multiple-items': 'Items',
 
   'cart-tos':
-    'The price and availability of items at mrg.com are subject to change. The Cart is a temporary place to store a list of your items and reflects each item most recent price.',
+    'The price and availability of items at attiahmall.com are subject to change. The Cart is a temporary place to store a list of your items and reflects each item most recent price.',
   subtotal: 'Subtotal',
   'cart-total': 'Cart Total',
   'cart-enter-code-or-coupon': 'Enter Code or Coupon',

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
-import logo from '../../assets/mrgnavlogo.png';
+import logo from '../../assets/attiah.png';
 export default function Logo() {
   const { locale } = useIntl();
   return (
@@ -13,8 +13,8 @@ export default function Logo() {
         <img
           // src={`${process.env.REACT_ARR_IMAGES_URL}/original/1606839936-mrg-setting-store_logo.png`}
           src={logo}
-          alt="MRG-logo"
-          className="w-24"
+          alt="attiah-logo"
+          style={{ width: '50px', height: '50px' }}
         />
       </Link>
     </div>

@@ -30,7 +30,7 @@ export default function MyAccount() {
   return (
     <Layout>
       <Helmet>
-        <title>My Account | MRG</title>
+        <title>My Account | AttiahMall</title>
       </Helmet>
       <div
         className={`relative  overflow-hidden myaccount__grid p-4 pb-3 ${

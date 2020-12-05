@@ -161,13 +161,13 @@ export default function RecentlyVisitedHorizontal({
 
                   <div className="flex items-center">
                     <p className=" mr-4  text-xs font-semibold text-red-700">
-                      {item.price} <span className="text-xs ">KD</span>
+                      {item.price} <span className="text-xs ">SAR</span>
                     </p>
                     {item.sale && (
                       <p className="text-xs  line-through text-gray-500  font-bold">
                         {' '}
                         {item.priceBefore}{' '}
-                        <span className="font-normal">KD</span>
+                        <span className="font-normal">SAR</span>
                       </p>
                     )}
                   </div>

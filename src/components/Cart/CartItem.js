@@ -124,7 +124,7 @@ export default function CartItem({
           </button>
         </div>
       </div>
-      <div className="text-center font-bold">{item.price * item.qty} KD</div>
+      <div className="text-center font-bold">{item.price * item.qty} SAR</div>
     </motion.div>
   );
 }

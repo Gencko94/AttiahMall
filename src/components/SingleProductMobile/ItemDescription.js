@@ -106,7 +106,7 @@ export default function ItemDescription({
           <div className="flex flex-wrap items-center">
             <h1 className=" ">{formatMessage({ id: 'price-before' })} :</h1>
             <h1 className=" text-base italic mx-2  line-through text-gray-700">
-              {data.simple_addons.promotion_price} KD
+              {data.simple_addons.promotion_price} SAR
             </h1>
           </div>
         )}
@@ -118,7 +118,7 @@ export default function ItemDescription({
             :
           </h1>
           <h1 className=" text-xl mx-2 text-red-700">
-            {data.simple_addons.price} KD
+            {data.simple_addons.price} SAR
           </h1>
           <h1 className=" font-normal  text-gray-700 uppercase">
             ({formatMessage({ id: 'vat-inclusive' })})

@@ -4,7 +4,7 @@ import { FaTwitter } from 'react-icons/fa';
 import { FaInstagram } from 'react-icons/fa';
 import { FaLinkedin } from 'react-icons/fa';
 import { useIntl } from 'react-intl';
-import logomrg from '../../assets/mrgnavlogo.png';
+import attiahlogo from '../../assets/attiah.png';
 export default function ThirdSection() {
   const { formatMessage } = useIntl();
   return (
@@ -24,10 +24,14 @@ export default function ThirdSection() {
         </button>
       </div>
       <div className=" px-4 py-2 flex justify-start items-end ">
-        <img src={logomrg} alt="logo" className="w-20" />
+        <img
+          src={attiahlogo}
+          alt="logo"
+          style={{ width: '50px', height: '50px' }}
+        />
 
         <h1 className=" font-semibold text-xs text-right mx-4">
-          &copy; 2020 MRG . {formatMessage({ id: 'footer-all-rights' })}
+          &copy; 2020 AttiahMall . {formatMessage({ id: 'footer-all-rights' })}
         </h1>
       </div>
     </div>

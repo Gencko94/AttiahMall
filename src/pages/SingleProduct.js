@@ -115,10 +115,10 @@ export default function SingleProduct() {
   return (
     <Layout>
       <Helmet>
-        {/* <title>{` Shop ${name.split('-').join(' ')} on MRG`} </title>
+        {/* <title>{` Shop ${name.split('-').join(' ')} on AttiahMall`} </title>
         <meta
           name="description"
-          content={`Shop  ${name.split('-').join(' ')} | MRG`}
+          content={`Shop  ${name.split('-').join(' ')} | AttiahMall`}
         /> */}
       </Helmet>
 

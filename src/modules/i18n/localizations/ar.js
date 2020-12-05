@@ -126,7 +126,7 @@ export const ar = {
   'login-button': 'تسجيل الدخول',
   'register-button': 'انشاء حساب',
   'login-welcome-back': 'اهلا بك مجددا !',
-  'register-on-mrg': 'اشترك في MRG',
+  'register-on-attiah': 'اشترك في Attiah Mall',
   'invalid-credentials': 'رقم الهاتف او كلمة المرور غير صحيحين',
   'new-to-family': 'هل انت مستخدم جديد ؟',
   'join-us-here': ' اشترك معنا الآن',
@@ -157,7 +157,7 @@ export const ar = {
   'two-items': 'قطعتين',
   'multiple-items': 'قطع',
   'cart-tos':
-    'إن سعر وتوافر العناصر على mrg.com عرضة للتغيير. تعتبر عربة التسوق مكانًا مؤقتًا لتخزين قائمة بالعناصر الخاصة بك وتعكس أحدث سعر لكل عنصر.',
+    'إن سعر وتوافر العناصر على attiahmall.com عرضة للتغيير. تعتبر عربة التسوق مكانًا مؤقتًا لتخزين قائمة بالعناصر الخاصة بك وتعكس أحدث سعر لكل عنصر.',
   subtotal: 'المبلغ الإجمالي',
   'cart-total': 'إجمالي العربة',
   'cart-enter-code-or-coupon': 'أدخل الكود او رقم الكوبون',
@@ -198,7 +198,7 @@ export const ar = {
   'you-can': 'بإمكانك',
   'guest-checkout': 'إتمام الدفع كزائر',
   'checkout-modal-tos':
-    'يساعدنا امتلاكك لحساب على mrg.com على تقديم افضل الخدمات لك ولعملائنا الآخرين .',
+    'يساعدنا امتلاكك لحساب على attiahmall.com على تقديم افضل الخدمات لك ولعملائنا الآخرين .',
   'confirm-location': 'تأكيد الموقع',
   'remove-location': 'إزالة الموقع',
   'mark-as-default': 'التعيين كموقع افتراضي',

@@ -135,7 +135,7 @@ export default function SideCartMenu({ setSideMenuOpen }) {
                       </Link>
                       <div className="flex items-center">
                         <h1 className="text-xs rounded p-1 font-bold  bg-gray-200 inline">
-                          {item.price * item.qty} KD
+                          {item.price * item.qty} SAR
                         </h1>
                         <h1 className="mx-1 text-sm">
                           {formatMessage({ id: 'quantity' })} : {item.qty}
@@ -178,7 +178,7 @@ export default function SideCartMenu({ setSideMenuOpen }) {
           <div>
             <div className="flex justify-between semibold items-center  my-2">
               <h1 className="">{formatMessage({ id: 'subtotal' })}</h1>
-              <h1 className=" font-semibold">{cartTotal} KD</h1>
+              <h1 className=" font-semibold">{cartTotal} SAR</h1>
             </div>
             <hr className="my-1" />
             <div className=" flex items-center my-2 text-center text-second-nav-text-light ">
