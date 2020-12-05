@@ -83,7 +83,7 @@ export default function CartContainer({
                   : `${data.cartItems.length} `}
                 {resolvePlural()})
               </h1>
-              <h1>{data.cartTotal}</h1> KD
+              <h1>{data.cartTotal}</h1> SAR
             </motion.div>
             <motion.div layout className="text-sm my-4">
               <h1>{formatMessage({ id: 'cart-tos' })}</h1>
