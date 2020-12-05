@@ -1,0 +1,13 @@
+{
+  "nav-myaccount": "My Account",
+  "login": "Login",
+  "register": "Register",
+  "nav-deliverTo": "Deliver To",
+  "nav-cart": "Cart",
+  "nav-wishlist": "Wishlist",
+  "email-validation": "Please enter a valid email address",
+  "email-empty": "Please enter an email address",
+  "password-min-6": "Must be atleast 6 characters",
+  "password-max-15": "Must be 15 characters or less",
+  "password-empty": "Please Enter a password"
+}

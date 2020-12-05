@@ -1,0 +1,13 @@
+{
+  "nav-myaccount": "حسابي",
+  "login": "تسجيل دخول",
+  "register": "اشتراك",
+  "nav-deliverTo": "توصيل الى",
+  "nav-cart": "السلة",
+  "nav-wishlist": "قائمتي المفضلة",
+  "email-validation": "الرجاء التأكد من عنوان البريد الإلكنروني",
+  "email-empty": "الرجاء ادخال البريد الإلكتروني",
+  "password-min-6": " 6 احرف كحد ادنى",
+  "password-max-15": "15 حرف كحد اقصى",
+  "password-empty": "الرجاء ادخال كلمة السر"
+}
