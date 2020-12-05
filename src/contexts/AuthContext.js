@@ -1,138 +1,112 @@
 import React from 'react';
 import { queryCache, useMutation, useQuery } from 'react-query';
-import {
-  checkAuth,
-  editUserProfileInfo,
-  userLogin,
-  userRegister,
-} from '../Queries/Queries';
 export const AuthProvider = React.createContext();
 export default function AuthContext({ children }) {
-  const {
-    data,
-    isLoading: authenticationLoading,
-    isError,
-    isFetching: authenticationFetching,
-  } = useQuery('authentication', checkAuth, {
-    retry: 0,
-    refetchOnWindowFocus: false,
-  });
   /**
-   * Edit user Info
+   * Authentication
    */
-  const [editMutation] = useMutation(editUserProfileInfo, {
-    onSuccess: data => {
-      queryCache.setQueryData('authentication', prev => {
-        return {
-          ...prev,
-          userData: data.userData,
-        };
-      });
-    },
-    throwOnError: true,
-  });
+  const checkAuthenticationStatus = () => {
+    const localAuthenticated = localStorage.getItem('localAuthenticated');
+    return new Promise(resolve => {
+      setTimeout(() => {
+        if (localAuthenticated === 'true') {
+          resolve({ isAuthenticated: true });
+        } else {
+          resolve({ isAuthenticated: false });
+        }
+      }, 2000);
+    });
+  };
 
-  /**
-   * Change Password
-   */
-  const [changePasswordMutation] = useMutation(editUserProfileInfo, {
-    onSuccess: data => {
-      queryCache.setQueryData('authentication', prev => {
-        return {
-          ...prev,
-          userData: data.userData,
-        };
-      });
-    },
-    throwOnError: true,
-  });
+  const { data: isAuthenticated, isLoading: authenticationLoading } = useQuery(
+    'authentication',
+    async () => {
+      const { isAuthenticated } = await checkAuthenticationStatus();
+      return isAuthenticated;
+    }
+  );
 
   /**
    * User Login
    */
-  const [userLoginMutation] = useMutation(
+  const [userLogin] = useMutation(
     async data => {
-      const res = await userLogin({
-        mobile: data.phoneNumber,
-        password: data.password,
-      });
-      if (res.status === true) {
-        localStorage.setItem('mrgAuthToken', res.data.access_token);
-        return { isAuthenticated: true };
+      const res = await handleUserLogin(data);
+      if (res.message === 'ok') {
+        return res.message;
       }
     },
     {
       onSuccess: () => {
-        queryCache.setQueryData('authentication', prev => {
-          return {
-            ...prev,
-            isAuthenticated: true,
-          };
+        queryCache.setQueryData('authentication', () => {
+          return true;
         });
-        queryCache.invalidateQueries('authentication');
       },
-      throwOnError: true,
     }
   );
 
   /**
    * User Register
    */
-  const [userRegisterMutation] = useMutation(
+  const [userRegister] = useMutation(
     async data => {
-      const res = await userRegister({
-        email: data.email,
-        password: data.password,
-        mobile: data.phoneNumber,
-        name: data.fullName,
-      });
-
-      if (res.status === true) {
-        localStorage.setItem('mrgAuthToken', res.data.access_token);
-        return { isAuthenticated: true };
+      const res = await handleUserRegister(data);
+      if (res.message === 'ok') {
+        return res.message;
       }
     },
     {
       onSuccess: () => {
-        queryCache.setQueryData('authentication', prev => {
-          return {
-            ...prev,
-            isAuthenticated: true,
-          };
+        queryCache.setQueryData('authentication', () => {
+          return true;
         });
-        queryCache.invalidateQueries('authentication');
       },
-      throwOnError: true,
     }
   );
 
   /**
    * User Logout
    */
-  const [userLogoutMutation] = useMutation(() => {
+  const [userLogout] = useMutation(() => {
     queryCache.setQueryData('authentication', () => {
-      return { isAuthenticated: false, userData: { userId: null } };
+      return false;
     });
-    localStorage.removeItem('mrgAuthToken');
+    localStorage.setItem('localAuthenticated', false);
   });
 
   /**
    *
    */
 
+  const handleUserRegister = data => {
+    return new Promise(resolve => {
+      localStorage.setItem('localAuthenticated', true);
+      setTimeout(() => {
+        resolve({
+          message: 'ok',
+        });
+      }, 1500);
+    });
+  };
+  const handleUserLogin = data => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        localStorage.setItem('localAuthenticated', true);
+        resolve({
+          message: 'ok',
+        });
+      }, 1500);
+    });
+  };
+
   return (
     <AuthProvider.Provider
       value={{
-        isAuthenticated: isError ? false : data?.isAuthenticated,
-        authenticationFetching,
+        isAuthenticated,
         authenticationLoading,
-        userRegisterMutation,
-        userLoginMutation,
-        userLogoutMutation,
-        userData: data?.userData,
-        userId: data?.userData?.id,
-        editMutation,
-        changePasswordMutation,
+        userRegister,
+        userLogin,
+        userLogout,
       }}
     >
       {children}

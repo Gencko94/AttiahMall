@@ -3,9 +3,7 @@ import React from 'react';
 import { useIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import cartEmptyimg from '../../assets/illustrations/cartEmpty.png';
-import { AuthProvider } from '../../contexts/AuthContext';
 export default function CartEmpty() {
-  const { userId } = React.useContext(AuthProvider);
   const { formatMessage, locale } = useIntl();
   const variants = {
     hidden: {
@@ -39,22 +37,20 @@ export default function CartEmpty() {
           </Link>
         </div>
       </div>
-      {!userId && (
-        <div className="flex flex-col justify-center p-2 font-semibold">
-          <Link
-            to={`/${locale}/app/login`}
-            className={`  text-center rounded py-2 px-3 bg-green-700 text-main-text uppercase `}
-          >
-            {formatMessage({ id: 'login' })}
-          </Link>
-          <Link
-            to={`/${locale}/app/register`}
-            className={` text-center  rounded py-2 px-3 bg-blue-700 text-main-text mt-2 uppercase `}
-          >
-            {formatMessage({ id: 'register' })}
-          </Link>
-        </div>
-      )}
+      <div className="flex flex-col justify-center p-2">
+        <Link
+          to={`/${locale}/app/login`}
+          className={`  text-center rounded p-2 bg-green-700 text-second-nav-text-light `}
+        >
+          {formatMessage({ id: 'login' })}
+        </Link>
+        <Link
+          to={`/${locale}/app/register`}
+          className={` text-center  rounded p-2 bg-blue-700 text-second-nav-text-light mt-2 `}
+        >
+          {formatMessage({ id: 'register' })}
+        </Link>
+      </div>
     </motion.div>
   );
 }

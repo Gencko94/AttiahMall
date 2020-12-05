@@ -3,32 +3,29 @@ import { useIntl } from 'react-intl';
 import ItemDescription from './AdditionalDetails/ItemDescription';
 import ItemReviews from './AdditionalDetails/ItemReviews';
 
-export default function AdditionalDetails({
-  data,
-  reviews,
-  reviewsLoading,
-  detailsTab,
-  setDetailsTab,
-}) {
+export default function AdditionalDetails({ data }) {
   const { formatMessage } = useIntl();
-
+  const [detailsTab, setDetailsTab] = React.useState(0);
   return (
     <div>
-      <div className="flex items-center">
+      <h1 className="text-xl font-semibold mb-3">
+        {formatMessage({ id: 'single-product-additional-details' })}
+      </h1>
+      <div className="flex justify-center rounded overflow-hidden">
         <button
           onClick={() => setDetailsTab(0)}
-          className={`text-lg p-2  text-center font-semibold uppercase  ${
-            detailsTab === 0 ? 'border-b-4  border-main-color' : 'text-gray-600'
-          } `}
+          className={`text-lg py-2 flex-1 text-center   ${
+            detailsTab === 0 && 'bg-main-color  text-main-text'
+          }   bg-gray-400`}
         >
           {formatMessage({ id: 'additional-details__item-description' })}
         </button>
 
         <button
           onClick={() => setDetailsTab(1)}
-          className={`text-lg p-2 mx-3 text-center font-semibold uppercase  ${
-            detailsTab === 1 ? 'border-b-4 border-main-color' : 'text-gray-600'
-          } `}
+          className={`text-lg py-2 flex-1 text-center   ${
+            detailsTab === 1 && 'bg-main-color  text-main-text'
+          }   bg-gray-400`}
         >
           {formatMessage({ id: 'additional-details__item-reviews' })}
         </button>
@@ -37,7 +34,7 @@ export default function AdditionalDetails({
         {detailsTab === 0 && <ItemDescription description={data.description} />}
 
         {detailsTab === 1 && (
-          <ItemReviews reviews={reviews} reviewsLoading={reviewsLoading} />
+          <ItemReviews reviews={data.reviews} rating={data.rating} />
         )}
       </div>
     </div>

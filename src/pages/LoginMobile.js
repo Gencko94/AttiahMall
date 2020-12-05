@@ -1,12 +1,11 @@
 import { Formik, useField } from 'formik';
 import React from 'react';
-import { Link, useHistory, useLocation } from 'react-router-dom';
-import logo from '../assets/mrg.svg';
+import { Link, useHistory } from 'react-router-dom';
+import logo from '../assets/attiah.png';
 import * as Yup from 'yup';
 import { useIntl } from 'react-intl';
 import { AuthProvider } from '../contexts/AuthContext';
-import Loader from 'react-loader-spinner';
-import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
+import { BeatLoader } from 'react-spinners';
 import ErrorSnackbar from '../components/ErrorSnackbar';
 import { BiChevronDown } from 'react-icons/bi';
 import useClickAway from '../hooks/useClickAway';
@@ -29,26 +28,22 @@ const PhoneNumberCustomInput = ({ label, value, name, ...props }) => {
       >
         {label}
       </label>
-      <div
-        className={`${
-          meta.error && 'border'
-        } flex rounded-lg border items-center relative  overflow-hidden`}
-      >
+      <div className="flex rounded-lg border items-center relative  overflow-hidden ">
         <div
           ref={menuRef}
           onClick={() => setMenuOpen(!menuOpen)}
           className="  cursor-pointer flex items-center p-1 border-r"
           style={{ width: '74px' }}
         >
-          <span>+965</span>
+          <span>+966</span>
           <BiChevronDown className="mx-1 w-5 h-5" />
           {menuOpen && (
             <div
               className="absolute top-100 left-0 w-full border z-1 bg-body-light"
               style={{ width: '74px' }}
             >
-              <div className="hover:bg-main-color p-2 hover:text-main-text flex justify-start items-center">
-                +965
+              <div className="hover:bg-main-color p-1 hover:text-main-text flex justify-start items-center">
+                +966
               </div>
             </div>
           )}
@@ -59,7 +54,7 @@ const PhoneNumberCustomInput = ({ label, value, name, ...props }) => {
           onBlur={e => {
             field.onBlur(e);
           }}
-          className=" w-full   p-2"
+          className=" w-full   p-1"
         />
       </div>
       {meta.touched && meta.error ? (
@@ -89,7 +84,7 @@ const CustomTextInput = ({ label, value, name, ...props }) => {
         onBlur={e => {
           field.onBlur(e);
         }}
-        className={`${meta.error && 'border'} w-full rounded-lg border   p-2`}
+        className=" w-full rounded-lg border   p-1"
       />
       {meta.touched && meta.error ? (
         <h1 className="text-xs text-main-color mt-1">{meta.error}</h1>
@@ -104,21 +99,22 @@ const CustomTextInput = ({ label, value, name, ...props }) => {
 
 export default function LoginMobile() {
   const { formatMessage, locale } = useIntl();
-  const { userLoginMutation } = React.useContext(AuthProvider);
+  const { userLogin } = React.useContext(AuthProvider);
   const [errorOpen, setErrorOpen] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
   const closeError = () => {
     setErrorOpen(false);
   };
-  const location = useLocation();
-  let { from } = location.state || { from: { pathname: `/${locale}/` } };
   const history = useHistory();
   const validationSchema = Yup.object({
+    email: Yup.string()
+      .email(formatMessage({ id: 'email-validation' }))
+      .required(formatMessage({ id: 'email-empty' })),
     password: Yup.string()
       .required(formatMessage({ id: 'password-empty' }))
       .min(6, formatMessage({ id: 'password-min-6' }))
       .max(15, formatMessage({ id: 'password-max-15' })),
-
+    fullName: Yup.string().required(formatMessage({ id: 'fullname-empty' })),
     phoneNumber: Yup.string()
       .matches(/^\d+$/, formatMessage({ id: 'number-only' }))
       .required(formatMessage({ id: 'phone-empty' })),
@@ -135,7 +131,7 @@ export default function LoginMobile() {
               src={logo}
               alt="logo"
               className=" mb-3"
-              style={{ width: '100px', height: '50px' }}
+              style={{ width: '50px', height: '50px' }}
             />
           </Link>
           <h2 className="text-lg text-center">
@@ -146,33 +142,30 @@ export default function LoginMobile() {
           <Formik
             initialValues={{
               password: '',
+
               phoneNumber: '',
             }}
             validationSchema={validationSchema}
-            onSubmit={async (values, { resetForm, setErrors }) => {
+            onSubmit={async (
+              values,
+              { resetForm, setErrors, setSubmitting }
+            ) => {
               setErrorOpen(false);
               try {
-                const res = await userLoginMutation(values);
-                console.log(res);
-                if (res.isAuthenticated === true) {
-                  history.replace(from);
+                const res = await userLogin(values);
+                if (res === 'ok') {
+                  resetForm();
+                  history.goBack();
+                } else {
+                  setErrors({
+                    phoneNumber: formatMessage({ id: 'credentials-wrong' }),
+                    password: formatMessage({ id: 'credentials-wrong' }),
+                  });
+                  setSubmitting(false);
                 }
               } catch (error) {
-                if (error.response?.data.message) {
-                  setErrors({
-                    phoneNumber: formatMessage({
-                      id: error.response.data.message,
-                    }),
-                    password: formatMessage({
-                      id: error.response.data.message,
-                    }),
-                  });
-                  return;
-                }
                 setErrorOpen(true);
-                setErrorMessage(
-                  formatMessage({ id: 'something-went-wrong-snackbar' })
-                );
+                setErrorMessage('Something went wrong, Please try again');
               }
             }}
           >
@@ -194,24 +187,15 @@ export default function LoginMobile() {
 
                   <div className="mt-1">
                     <button
-                      type="submit"
                       className={`${
                         isSubmitting
                           ? 'bg-main-color cursor-not-allowed'
                           : 'bg-main-color text-second-nav-text-light hover:bg-red-800'
-                      } w-full rounded  p-2 flex items-center justify-center font-semibold  transition duration-150 uppercase `}
+                      } w-full rounded text-sm  p-3 font-semibold  transition duration-150 uppercase `}
                     >
-                      {isSubmitting && (
-                        <Loader
-                          type="ThreeDots"
-                          color="#fff"
-                          secondaryColor="black"
-                          height={24}
-                          width={24}
-                          visible={isSubmitting}
-                        />
-                      )}
-                      {!isSubmitting && formatMessage({ id: 'login-button' })}
+                      {isSubmitting && <BeatLoader size={10} />}
+                      {!isSubmitting &&
+                        formatMessage({ id: 'register-button' })}
                     </button>
                   </div>
                 </form>

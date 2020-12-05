@@ -5,79 +5,104 @@ import { BsPlus } from 'react-icons/bs';
 import { useIntl } from 'react-intl';
 import MultiClamp from 'react-multi-clamp';
 import BuyOptions from './BuyOptions';
-import { useHistory } from 'react-router-dom';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
-import 'react-lazy-load-image-component/src/effects/blur.css';
+
 export default function SliderItem({
-  item,
+  data,
+  isLightTheme,
   isItemInCart,
   activeBuyOptions,
   loadingButton,
   setSize,
-  handleAddToCart,
-  handleRemoveFromCart,
+
   setQuantity,
   handleBuyOptionsToggle,
   options,
-  cartItems,
+  addMutation,
+  removeMutation,
 }) {
   const { locale } = useIntl();
 
-  const history = useHistory();
+  const handleAddItemToCart = async data => {
+    try {
+      await addMutation({
+        id: data.id,
+        photo: data.photos.small,
+        quantity: options.quantity,
+        price: data.price,
+        name: data.name,
+        options,
+        category: data.category,
+        rating: data.rating,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleRemoveItemFromCart = async data => {
+    try {
+      await removeMutation(data);
+    } catch (error) {}
+  };
+
   return (
     <div className="my-4  px-2   ">
       <div
-        className={`overflow-hidden slider-item relative
-         shadow-itemsSlider-shallow
-         rounded`}
+        className={`overflow-hidden flex flex-col relative ${
+          isLightTheme ? 'shadow-itemsSlider-shallow' : 'shadow-itemsSlider'
+        } rounded`}
       >
-        {/* <span className="sale-mini__banner text-xs font-semibold bg-main-color text-main-text px-1 ">
+        <span className="sale-mini__banner text-xs font-semibold bg-main-color text-main-text px-1 ">
           50% OFF
-        </span> */}
-        <a href={`/${locale}/c/${item.id}`}>
-          {/* <LazyLoadImage
-            title={item.translation[locale].title}
-            src={`${process.env.REACT_APP_IMAGES_URL}/original/${item.image.link}`}
-            alt={item.translation[locale].title}
-            effect="blur"
-            placeholderSrc={`${process.env.REACT_APP_IMAGES_URL}/small/${item.image.link}`}
-            // height="auto"
-          /> */}
+        </span>
+        <a
+          href={`/${locale}/${data.category.replace(
+            /\s|%|,/g,
+            '-'
+          )}/${data.name.replace(/\s|%|,|-/g, '-')}/${data.id}`}
+        >
           <img
-            title={item.translation[locale].title}
-            src={`${process.env.REACT_APP_IMAGES_URL}/medium/${item.image.link}`}
-            alt={item.translation[locale].title}
+            title={data.name}
+            src={data.photos.small}
+            alt={data.name}
             className=""
           />
         </a>
-        {/* <hr /> */}
+        <hr />
 
         <div
           className={` 
                     
-                     
-                         bg-body-light text-body-text-light
-                          
-                      `}
+                      ${
+                        isLightTheme
+                          ? 'bg-body-light text-body-text-light'
+                          : 'bg-body-dark text-body-text-dark'
+                      }`}
         >
           <div className="p-2" style={{ height: '40px' }}>
             <a
-              title={item.translation[locale].title}
+              title={data.name}
               className="hover:underline"
-              href={`/${locale}/c/${item.id}`}
+              href={`/${locale}/${data.category.replace(
+                /\s|%|,/g,
+                '-'
+              )}/${data.name.replace(/\s|%|,|-/g, '-')}/${data.id}`}
             >
-              <MultiClamp className=" text-gray-800" clamp={2} ellipsis="...">
-                {item.translation[locale].title}
+              <MultiClamp
+                className="text-sm text-gray-800"
+                clamp={2}
+                ellipsis="..."
+              >
+                {data.name}
               </MultiClamp>
             </a>
           </div>
 
           <div className=" py-2 px-3 flex items-center justify-between">
             <p className="   text-lg font-semibold text-main-color whitespace-no-wrap">
-              50 <span className="text-xs ">SAR</span>
+              {data.price} <span className="text-xs ">SAR</span>
             </p>
             <button
-              onClick={() => handleBuyOptionsToggle(item.id)}
+              onClick={() => handleBuyOptionsToggle(data.id)}
               className=" rounded-full  p-2  shadow-itemsSlider-shallow relative text-body-light z-3 bg-main-color"
             >
               <TiShoppingCart
@@ -102,17 +127,16 @@ export default function SliderItem({
           </div>
         </div>
         <AnimatePresence>
-          {activeBuyOptions === item.id && (
+          {activeBuyOptions === data.id && (
             <BuyOptions
-              cartItems={cartItems}
               setQuantity={setQuantity}
-              item={item}
+              data={data}
               options={options}
               setSize={setSize}
               loadingButton={loadingButton}
               isItemInCart={isItemInCart}
-              handleRemoveFromCart={handleRemoveFromCart}
-              handleAddToCart={handleAddToCart}
+              handleRemoveItemFromCart={handleRemoveItemFromCart}
+              handleAddItemToCart={handleAddItemToCart}
             />
           )}
         </AnimatePresence>

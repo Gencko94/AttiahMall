@@ -1,84 +1,85 @@
 import React from 'react';
+import { DataProvider } from '../../contexts/DataContext';
 import { queryCache, useMutation, useQuery } from 'react-query';
-import Loader from 'react-loader-spinner';
-import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
+import { BeatLoader } from 'react-spinners';
 import NoAddresses from '../MyAccount/MyAddresses/NoAddresses';
 import GoogleMapsAddress from '../GoogleMapsAddress';
 import LocationsMobile from './MyAddressesMobile/LocationsMobile';
 import { motion } from 'framer-motion';
-import {
-  addUserAddress,
-  getUserAddresses,
-  removeUserAddress,
-} from '../../Queries/Queries';
 export default function MyAddressesMobile() {
   const [showMap, setShowMap] = React.useState(false);
-
+  const {
+    getUserLocations,
+    handleAddLocation,
+    handleRemoveLocation,
+    isLightTheme,
+  } = React.useContext(DataProvider);
   const { isLoading, data, refetch, isError } = useQuery(
     'addresses',
     async () => {
-      const res = await getUserAddresses();
-      return res;
+      const res = await getUserLocations();
+      return res.locations;
     },
     { refetchOnWindowFocus: false }
   );
 
+  /* Add Mutation */
   const [addMutation] = useMutation(
-    addUserAddress,
-
+    async location => {
+      const res = await handleAddLocation(location);
+      if (res.message === 'ok') {
+        return res.newLocation;
+      }
+    },
     {
-      onSuccess: newAddress => {
-        console.log('success');
+      onSuccess: newLocation => {
         queryCache.setQueryData('addresses', prev => {
-          return [...prev, newAddress];
+          return [...prev, newLocation];
         });
         refetch();
 
         setShowMap(false);
       },
-      throwOnError: true,
     }
   );
 
   /* Delete Mutation */
-  const [deleteMutation] = useMutation(removeUserAddress, {
-    onSuccess: id => {
-      queryCache.setQueryData('addresses', prev => {
-        return prev.map(item => item.id !== id);
-      });
-      refetch();
-
-      setShowMap(false);
+  const [deleteMutation] = useMutation(
+    async location => {
+      const res = await handleRemoveLocation(location);
+      if (res.message === 'ok') {
+        return res.locations;
+      }
     },
-    throwOnError: true,
-  });
+    {
+      onSuccess: locations => {
+        queryCache.setQueryData('addresses', () => {
+          return locations;
+        });
+        refetch();
+
+        setShowMap(false);
+      },
+    }
+  );
   if (isError) {
     return (
-      <div
-        div
-        className=" p-4 flex items-center justify-center font-semibold"
-        style={{ minHeight: 'calc(-173px + 100vh)' }}
-      >
-        <h1>Oops, Something Went Wrong</h1>
-        <button className="bg-gray-300 rounded px-2 py-1" onClick={refetch}>
-          Try Again
-        </button>
+      <div div className=" p-4 " style={{ height: 'calc(-173px + 100vh)' }}>
+        <div className="flex h-full justify-center items-center font-semibold">
+          <h1>Oops, Something Went Wrong</h1>
+          <button className="bg-gray-300 rounded px-2 py-1" onClick={refetch}>
+            Try Again
+          </button>
+        </div>
       </div>
     );
   }
   if (isLoading)
     return (
-      <div
-        className=" p-4 flex justify-center items-center "
-        style={{ minHeight: 'calc(-173px + 100vh)' }}
-      >
-        <Loader
-          type="ThreeDots"
-          color="#b72b2b"
-          height={40}
-          width={40}
-          visible={isLoading}
-        />
+      <div className=" p-4 " style={{ height: 'calc(-173px + 100vh)' }}>
+        <div className="flex h-full justify-center items-center">
+          <BeatLoader size={10} color={'#b72b2b'} />
+        </div>
       </div>
     );
   const containerVariants = {
@@ -101,10 +102,12 @@ export default function MyAddressesMobile() {
       initial="hidden"
       animate="visible"
       exit="exit"
+      className="h-full"
     >
-      {!showMap &&
+      {!isLoading &&
+        !showMap &&
         (data.length === 0 ? (
-          <NoAddresses setShowMap={setShowMap} />
+          <NoAddresses isLightTheme={isLightTheme} setShowMap={setShowMap} />
         ) : (
           <LocationsMobile
             locations={data}
@@ -113,7 +116,7 @@ export default function MyAddressesMobile() {
           />
         ))}
       {showMap && (
-        <div className="relative" style={{ minHeight: 'calc(-176px + 100vh)' }}>
+        <div className="relative" style={{ minHeight: 'calc(-173px + 100vh)' }}>
           <GoogleMapsAddress addMutation={addMutation} />
         </div>
       )}

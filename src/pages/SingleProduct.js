@@ -6,29 +6,29 @@ import Breadcrumbs from '../components/SingleProduct/Breadcrumbs';
 import ImageZoom from '../components/SingleProduct/ImageZoom';
 import MiddleSection from '../components/SingleProduct/MiddleSection';
 import RightSection from '../components/SingleProduct/RightSection';
+import RelatedItems from '../components/SingleProduct/RelatedItems';
 import { Helmet } from 'react-helmet';
 import { useParams } from 'react-router-dom';
+import InView from 'react-intersection-observer';
+import { useLazyLoadFetch } from '../hooks/useLazyLoadFetch';
 import Layout from '../components/Layout';
 import SideCartMenu from '../components/SingleProduct/SideCartMenu';
-import { useQuery } from 'react-query';
+import { queryCache, useMutation, useQuery } from 'react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import SingleProductLoader from '../components/SingleProduct/SingleProductLoader';
 import AdditionalDetails from '../components/SingleProduct/AdditionalDetails';
-import { getProductReviews, getSingleItem } from '../Queries/Queries';
-import { AuthProvider } from '../contexts/AuthContext';
-import { CartAndWishlistProvider } from '../contexts/CartAndWishlistContext';
 
 export default function SingleProduct() {
-  const { id } = useParams();
-  const { deliveryCountry, addViewedItems } = React.useContext(DataProvider);
+  const { id, name } = useParams();
   const {
-    addToCartMutation,
-
-    addToWishListMutation,
-  } = React.useContext(CartAndWishlistProvider);
-  const { userId, isAuthenticated } = React.useContext(AuthProvider);
-  const [selectedVariation, setSelectedVariant] = React.useState(0);
-  const [selectedSize, setSelectedSize] = React.useState(0);
+    deliveryCountry,
+    addItemToCart,
+    removeItemFromCart,
+    allItems,
+    addItemToWishList,
+    removeItemFromWishList,
+    getSingleItemDetails,
+  } = React.useContext(DataProvider);
   const quantityOptions = [
     { value: 1, label: 1 },
     { value: 2, label: 2 },
@@ -42,93 +42,270 @@ export default function SingleProduct() {
   const { data, isLoading } = useQuery(
     ['singleProduct', id],
     async (key, id) => {
-      const res = await getSingleItem(id);
+      const res = await getSingleItemDetails(id);
+      return res;
+    },
+    { refetchOnWindowFocus: false }
+  );
+
+  /**
+   * Add Mutation
+   */
+
+  const [addToCartMutation] = useMutation(
+    async item => {
+      setAddToCartButtonLoading(true);
+      const res = await addItemToCart(item);
       return res;
     },
     {
-      refetchOnWindowFocus: false,
-      onSuccess: async () => {
-        // add Item to localStorage
-        return await addViewedItems(id);
+      onSuccess: data => {
+        queryCache.setQueryData(['singleProduct', id], prev => {
+          return {
+            ...prev,
+            cartItems: data.cartItems,
+            cartTotal: data.cartTotal,
+            itemInCart: true,
+          };
+        });
+        queryCache.setQueryData('cartAndWishListLength', prev => {
+          return {
+            ...prev,
+            cart: data.cartItems.length,
+          };
+        });
+        queryCache.setQueryData('cartItems', prev => {
+          return {
+            ...prev,
+            cartItems: data.cartItems,
+            cartTotal: data.cartTotal,
+          };
+        });
+        setAddToCartButtonLoading(false);
+        setSideMenuOpen(true);
       },
-      retry: true,
     }
   );
-  const { data: reviews, isLoading: reviewsLoading } = useQuery(
-    ['product-reviews', id],
-    getProductReviews,
-    { retry: true, enabled: data }
+  const [addToWishListMutation] = useMutation(
+    async item => {
+      setAddToWishListButtonLoading(true);
+      const res = await addItemToWishList(item);
+      return res;
+    },
+    {
+      onSuccess: data => {
+        queryCache.setQueryData('cartAndWishListLength', prev => {
+          return {
+            ...prev,
+            wishlist: data.wishListItems.length,
+          };
+        });
+        queryCache.setQueryData('wishListItems', prev => {
+          return {
+            ...prev,
+            wishListItems: data.wishListItems,
+          };
+        });
+
+        queryCache.setQueryData(['singleProduct', id], prev => {
+          return {
+            ...prev,
+            itemInWishList: true,
+          };
+        });
+        setAddToWishListButtonLoading(false);
+        // setSideMenuOpen(true);
+      },
+    }
+  );
+  /**
+   * Remove Mutation
+   */
+
+  const [removeFromCartMutation] = useMutation(
+    async id => {
+      setAddToCartButtonLoading(true);
+      const res = await removeItemFromCart(id);
+      return res;
+    },
+    {
+      onSuccess: data => {
+        queryCache.setQueryData(['singleProduct', id], prev => {
+          return {
+            ...prev,
+            cartItems: data.cartItems,
+            cartTotal: data.cartTotal,
+            itemInCart: false,
+          };
+        });
+        queryCache.setQueryData('cartItems', prev => {
+          return {
+            ...prev,
+            cartItems: data.cartItems,
+            cartTotal: data.cartTotal,
+          };
+        });
+        queryCache.setQueryData('cartAndWishListLength', prev => {
+          return {
+            ...prev,
+            cart: data.cartItems.length,
+          };
+        });
+        setAddToCartButtonLoading(false);
+      },
+    }
+  );
+  const [removeFromWishListMutation] = useMutation(
+    async id => {
+      setAddToWishListButtonLoading(true);
+      const res = await removeItemFromWishList(id);
+      return res;
+    },
+    {
+      onSuccess: data => {
+        queryCache.setQueryData(['singleProduct', id], prev => {
+          return {
+            ...prev,
+            itemInWishList: false,
+          };
+        });
+        queryCache.setQueryData('wishListItems', prev => {
+          return {
+            ...prev,
+            wishListItems: data.wishListItems,
+          };
+        });
+        queryCache.setQueryData('cartAndWishListLength', prev => {
+          return {
+            ...prev,
+            wishlist: data.wishListItems.length,
+          };
+        });
+        setAddToWishListButtonLoading(false);
+      },
+    }
   );
   const [quantity, setQuantity] = React.useState(quantityOptions[0]);
   const [size, setSize] = React.useState(null);
   const [color, setColor] = React.useState(null);
+  const [isFetching, setFetching] = React.useState(true);
+  const [page, setPage] = React.useState(0);
   const [sideMenuOpen, setSideMenuOpen] = React.useState(false);
-  // const [relatedData, hasMore] = useLazyLoadFetch(allItems, page);
-  const [itemInCart, setItemInCart] = React.useState(false);
-  const [itemInWishList, setItemInWishList] = React.useState(false);
+  const [relatedData, hasMore] = useLazyLoadFetch(allItems, page);
+  const [related, setRelated] = React.useState(null);
+
   const [addToCartButtonLoading, setAddToCartButtonLoading] = React.useState(
     false
   );
-  const [detailsTab, setDetailsTab] = React.useState(0);
   const [
     addToWishListButtonLoading,
     setAddToWishListButtonLoading,
   ] = React.useState(false);
-
-  const handleAddToCart = async () => {
-    setAddToCartButtonLoading(true);
-    if (userId) {
-      try {
-        const newItem = { id: data.id, quantity: quantity.value, size, color };
-        await addToCartMutation({ newItem, userId });
-        setAddToCartButtonLoading(false);
-        setSideMenuOpen(true);
-        setItemInCart(true);
-      } catch (error) {
-        console.clear();
-
-        console.log(error.response);
-        if (error.response.data.message === 'Item founded on the Cart') {
-          setItemInCart(true);
-        }
-        setAddToCartButtonLoading(false);
+  const handleLoadMore = inView => {
+    if (inView) {
+      if (hasMore) {
+        setFetching(true);
+        setPage(page + 1);
       }
-    } else {
+    }
+  };
+  const handleAddToCart = async () => {
+    try {
+      await addToCartMutation({
+        id: data.item.id,
+        quantity: quantity.value,
+        price: data.item.price,
+        name: data.item.name,
+        photo: data.item.photos.small,
+        category: data.item.category,
+        size,
+        color,
+        rating: data.item.rating,
+      });
+    } catch (error) {
+      console.log(error);
     }
   };
   const handleAddToWishList = async () => {
-    setAddToWishListButtonLoading(true);
     try {
-      await addToWishListMutation({ id: data.id, userId });
-      setAddToWishListButtonLoading(false);
-      setItemInWishList(true);
+      await addToWishListMutation({
+        id: data.item.id,
+        quantity: quantity.value,
+        price: data.item.price,
+        name: data.item.name,
+        photo: data.item.photos.small,
+        category: data.item.category,
+        size,
+        color,
+        rating: data.rating,
+      });
     } catch (error) {
-      console.clear();
-      if (error.response.data.message === 'Item founded on the Wishlist') {
-        setItemInWishList(true);
-      }
-      setAddToWishListButtonLoading(false);
-      console.log(error.response);
+      console.log(error);
     }
   };
+  const handleRemoveFromCart = async id => {
+    try {
+      await removeFromCartMutation(id);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleRemoveFromWishList = async id => {
+    try {
+      await removeFromWishListMutation(id);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchData = () => {
+    setTimeout(() => {
+      setRelated(relatedData);
+
+      setFetching(false);
+    }, 1500);
+  };
+
+  React.useEffect(() => {
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page]);
+
+  // Add item to localStorage //
+  React.useEffect(() => {
+    const visitedItems = JSON.parse(localStorage.getItem('visitedItems'));
+    const isItemInHistory = visitedItems.find(item => item.id === id);
+    if (isItemInHistory !== undefined) {
+      return;
+    } else {
+      visitedItems.push({ id });
+      localStorage.setItem('visitedItems', JSON.stringify(visitedItems));
+    }
+  }, [id]);
 
   return (
     <Layout>
       <Helmet>
-        {/* <title>{` Shop ${name.split('-').join(' ')} on AttiahMall`} </title>
+        <title>{` Shop ${name.split('-').join(' ')} on AttiahMall`} </title>
         <meta
           name="description"
           content={`Shop  ${name.split('-').join(' ')} | AttiahMall`}
-        /> */}
+        />
       </Helmet>
 
       <AnimatePresence>
         {sideMenuOpen && (
-          <SideCartMenu key="side-cart" setSideMenuOpen={setSideMenuOpen} />
+          <SideCartMenu
+            key={879}
+            cartItems={data.cartItems}
+            cartTotal={data.cartTotal}
+            setSideMenuOpen={setSideMenuOpen}
+            handleRemoveFromCart={handleRemoveFromCart}
+          />
         )}
         {sideMenuOpen && (
           <motion.div
-            key="sidecart-bg"
+            key={268}
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.5 }}
             exit={{ opacity: 0 }}
@@ -140,61 +317,44 @@ export default function SingleProduct() {
 
       <div className=" px-4 ">
         <div className="mx-auto max-w-default">
-          {!isLoading && <Breadcrumbs data={data.categories} />}
+          <Breadcrumbs />
           {isLoading && <SingleProductLoader />}
           {!isLoading && (
             <div className="single-product__container-desktop">
               <div className=" ">
-                <ImageZoom data={data} selectedVariation={selectedVariation} />
+                <ImageZoom
+                  data={{ images: data.item.photos.main, name: data.item.name }}
+                />
               </div>
 
               <MiddleSection
-                selectedVariation={selectedVariation}
-                data={data}
+                data={data.item}
                 deliveryCountry={deliveryCountry}
                 setColor={setColor}
                 color={color}
                 setSize={setSize}
                 size={size}
-                setSelectedVariant={setSelectedVariant}
-                selectedSize={selectedSize}
-                setSelectedSize={setSelectedSize}
-                reviewsLength={reviews?.length}
-                reviewsLoading={reviewsLoading}
-                setDetailsTab={setDetailsTab}
               />
               <RightSection
-                data={data}
+                data={data.item}
                 quantity={quantity}
                 setQuantity={setQuantity}
                 handleAddToCart={handleAddToCart}
                 handleAddToWishList={handleAddToWishList}
+                handleRemoveFromWishList={handleRemoveFromWishList}
+                handleRemoveFromCart={handleRemoveFromCart}
                 quantityOptions={quantityOptions}
                 addToCartButtonLoading={addToCartButtonLoading}
                 addToWishListButtonLoading={addToWishListButtonLoading}
-                itemInCart={itemInCart}
-                itemInWishList={itemInWishList}
-                userId={userId}
-                isAuthenticated={isAuthenticated}
+                itemInCart={data.itemInCart}
+                itemInWishList={data.itemInWishList}
               />
             </div>
           )}
           <div id="details" className="py-2 mb-2">
-            {!isLoading && (
-              <AdditionalDetails
-                data={
-                  data.type === 'simple'
-                    ? data.simple_addons
-                    : data.variation_addons
-                }
-                reviews={reviews}
-                reviewsLoading={reviewsLoading}
-                detailsTab={detailsTab}
-                setDetailsTab={setDetailsTab}
-              />
-            )}
+            {!isLoading && <AdditionalDetails data={data.item} />}
           </div>
-          {/* {related && <RelatedItems relatedData={related} />}
+          {related && <RelatedItems relatedData={related} />}
           {isFetching && <div>Loading ...</div>}
           <InView
             as="div"
@@ -203,7 +363,7 @@ export default function SingleProduct() {
             }}
           >
             <div></div>
-          </InView> */}
+          </InView>
         </div>
       </div>
     </Layout>

@@ -1,5 +1,5 @@
 import React from 'react';
-import SelectAddress from '../components/Cart/GuestCheckout/SelectAddress';
+import Address from '../components/Cart/GuestCheckout/Address';
 import OrderPlaced from '../components/Cart/GuestCheckout/OrderPlaced';
 import PersonalInformation from '../components/Cart/GuestCheckout/PersonalInformation';
 import Stepper from '../components/Cart/Stepper';
@@ -42,9 +42,9 @@ export default function GuestCheckOut() {
     <Layout>
       <div className="xxl:max-w-default md:max-w-screen-xl mx-auto">
         <Stepper selectedStep={selectedStep} stepDone={stepDone} />
-        <div className="mb-3" style={{ minHeight: 'calc(100vh - 150px)' }}>
+        <div className="mb-3" style={{ minHeight: 'calc(100vh - 180px)' }}>
           {selectedStep === 0 && (
-            <SelectAddress
+            <Address
               handleStepForward={handleStepForward}
               address={address}
               setAddress={setAddress}

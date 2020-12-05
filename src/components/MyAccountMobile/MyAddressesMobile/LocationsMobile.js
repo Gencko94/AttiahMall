@@ -11,16 +11,16 @@ export default function LocationsMobile({
 }) {
   const { formatMessage } = useIntl();
   const [deleteButtonLoading, setDeleteButtonLoading] = React.useState(null);
-  const handleRemoveLocation = async id => {
+  const handleRemoveLocation = async location => {
     try {
-      setDeleteButtonLoading(id);
-      await deleteMutation(id);
+      setDeleteButtonLoading(location.lat);
+      await deleteMutation(location);
     } catch (error) {
-      console.log(error.response);
+      console.log(error);
     }
   };
   return (
-    <div style={{ minHeight: 'calc(-173px + 100vh)' }}>
+    <div style={{ height: 'calc(-173px + 100vh)' }}>
       <div className="flex p-3 items-center justify-between bg-main-color text-main-text">
         <h1 className="text-lg">
           {formatMessage({ id: 'we-have-found' })}

@@ -29,7 +29,6 @@ const baseStrings = {
   'full-name': 'Full Name',
   'phone-number': 'Phone Number',
   'date-of-birth': 'Date of Birth',
-  'date-joined': 'Date Joined',
   security: 'Security',
   'email-address': 'Email Address',
   password: 'Password',
@@ -48,11 +47,10 @@ const baseStrings = {
   'go-back': 'Go back',
   'add-to-cart': 'Add to Cart',
   'added-to-cart': 'Added to Cart',
-  'added-to-wishlist': 'Added to Wishlist',
   'your-recently-visited-items': 'Your Recently visited items',
   'model-number': 'Model Number',
-  'one-rating': 'One Rating',
-  'two-ratings': 'Two Ratings',
+  'one-rating': 'Rating',
+  'two-ratings': 'Ratings',
   ratings: 'Ratings',
   'the-rating': 'Rating',
   'in-stock': 'In Stock',
@@ -65,15 +63,13 @@ const baseStrings = {
   'add-to-wishlist': 'Add to Wishlist',
   'remove-from-cart': 'Remove from cart',
   'remove-from-wishlist': 'Remove from Wishlist',
-  remove: 'Remove',
   'additional-details': 'Additional Details',
   description: 'Description',
   specifications: 'Specifications',
   reviews: 'Reviews',
-  review: 'Review',
   'the-reviews': 'Reviews',
-  'one-review': 'One Review',
-  'two-reviews': 'Two Reviews',
+  'one-review': 'Review',
+  'two-reviews': 'Reviews',
   'secure-transaction': 'Secure transaction',
   quantity: 'Quantity',
   'estimated-delivery': 'Estimated Delivery',
@@ -93,17 +89,6 @@ const baseStrings = {
   'not-found-title': "We can't seem to find the page you're looking for. ",
   'back-to-home': 'Back to Homepage',
   oops: 'Oops !',
-  'press-enter-to-search': 'Press Enter to search ',
-  'something-went-wrong-snackbar': 'Something went wrong, Please try again',
-  'hello-signin': 'Hello,Sign in',
-  hello: 'Hello',
-  off: 'OFF',
-  'loading-reviews': 'Loading Reviews...',
-  'welcome-user': 'Welcome',
-  day: 'Day',
-  days: 'Days',
-  'delivery-cost': 'Delivery Cost',
-  'accepted-payments': 'Accepted Payment Methods',
 
   //
   'home.title': 'Home',
@@ -133,20 +118,13 @@ const baseStrings = {
   'login-button': 'Login',
   'register-button': 'Create an account',
   'login-welcome-back': 'Welcome Back !',
-  'register-on-attiah': 'Register on Attiah Mall ',
-  'invalid-credentials': 'Phone number or password are not correct',
+  'register-on-attiah': 'Register on AttiahMall ',
+  'credentials-wrong': 'Phone number or password are not correct',
   'new-to-family': 'Are you new to the family ? ',
   'join-us-here': 'Join us here',
   'forgot-password': 'Forgot password ?',
-  'save-button': 'Save',
   'password-reset': 'Password Reset',
   'password-reset-send-button': 'Send Code',
-
-  'change-password': 'Change your password',
-  'old-password': 'Old Password',
-  'new-password': 'New Password',
-  'same-password': 'Both password need to be the same',
-  'confirm-password': 'Confirm Password',
   'already-have-an-account':
     'Already have an account ? <link>Log in instead</link>',
   'terms-of-service':
@@ -163,23 +141,21 @@ const baseStrings = {
   'multiple-items': 'Items',
 
   'cart-tos':
-    'The price and availability of items at attiahmall.com are subject to change. The Cart is a temporary place to store a list of your items and reflects each item most recent price.',
+    'The price and availability of items at attiah-mall.com are subject to change. The Cart is a temporary place to store a list of your items and reflects each item most recent price.',
   subtotal: 'Subtotal',
   'cart-total': 'Cart Total',
-  'cart-enter-code-or-coupon': 'Enter Code or Coupon',
+  'cart-enter-code-or-coupon': 'Enter Code or Coupon here',
   'cart-code-button': 'Enter',
   'cart-empty': 'Oops, Your cart is Empty !',
   'cart-delivery-cost': 'Delivery Cost',
   'cart-free': 'Free',
   'check-today-deals': 'Check today deals',
   'shopping-cart': 'Shopping cart',
-  'wishlist-empty': 'Your Wishlist is Empty !',
   single: '1',
   // guest check out
   // stepper
   address: 'Address',
   'personal-information': 'Personal Information',
-  'edit-personal-information': 'Edit Personal information',
   'order-placed': 'Order Placed',
   // maps
   'find-my-position': 'Find my position',
@@ -189,14 +165,6 @@ const baseStrings = {
   'maps-detailed-address-apartment': 'House or Apartment Number',
   'maps-detailed-address-building': 'Building or Tower Number',
   'maps-detailed-address-phone': 'Phone Number',
-  'maps-details-extra-details': 'Additional Details',
-  'maps-detailed-address-apartment-placeholder':
-    'Enter House or Apartment Number..',
-  'maps-detailed-address-building-placeholder':
-    'Enter Building or Tower Number.. ',
-  'maps-detailed-address-phone-placeholder': 'Enter a Phone number..',
-  'maps-details-extra-details-placeholder': 'Enter Any additional details..',
-  'maps-details-optional': 'Optional',
   'apartment-empty': 'Please enter House or Apartment Number',
   'building-empty': 'Please enter Building or Tower Number',
   'phone-empty': 'Please Enter a phone number',
@@ -205,9 +173,9 @@ const baseStrings = {
   // checkout modal
   'not-signed-in': 'You are not signed in',
   'you-can': 'you can',
-  'guest-checkout': 'Checkout as guest',
+  'fly-checkout': 'Checkout on the fly',
   'checkout-modal-tos':
-    'Having an account at mrg.com help us make a better user experience for you and other customers.',
+    'Having an account at attiah-mall.com help us make a better user experience for you and other customers.',
   'confirm-location': 'Confirm Location',
   'remove-location': 'Remove',
   'mark-as-default': 'Mark as Default location',
@@ -239,22 +207,12 @@ const baseStrings = {
    */
   'single-product-size': 'Available sizes for this product',
   'single-product-color': 'Available colors for this product',
+  'single-product-additional-details': 'Additional Details for this product',
   'additional-details__item-specifications': 'Item Specifications',
   'additional-details__item-description': 'Item Description',
   'additional-details__item-reviews': 'Item Reviews',
 
   'single-product-product-review': 'Product Rating',
-  'single-product-average-rating': 'Average Product Rating',
-  'no-ratings':
-    'There are no Ratings for this Product yet, Be the first to Rate ',
-  'how-to-rate': 'How do i rate this Product ?',
-  'rating-guide':
-    'If you have Purchased this item, you can Rate and Leave a Feedback at <link>My Orders</link>',
-  /**
-   * Viewed Items Page
-   *
-   */
-  'your-viewed-items': 'Your Browsing history',
   /**
    * Footer
    */

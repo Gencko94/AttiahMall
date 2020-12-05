@@ -7,13 +7,12 @@ import { AnimatePresence } from 'framer-motion';
 export default function Locations({ locations, setShowMap, deleteMutation }) {
   const { formatMessage } = useIntl();
   const [deleteButtonLoading, setDeleteButtonLoading] = React.useState(null);
-  const handleRemoveLocation = async id => {
+  const handleRemoveLocation = async location => {
     try {
-      setDeleteButtonLoading(id);
-      await deleteMutation(id);
+      setDeleteButtonLoading(location.lat);
+      await deleteMutation(location);
     } catch (error) {
-      setDeleteButtonLoading(null);
-      console.log(error.response);
+      console.log(error);
     }
   };
   return (

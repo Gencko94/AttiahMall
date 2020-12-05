@@ -1,92 +1,40 @@
 import React from 'react';
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import Rating from 'react-rating';
 import moment from 'moment';
 import 'moment/locale/ar';
 
-import Loader from 'react-loader-spinner';
-import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
-import { Link } from 'react-router-dom';
-
-export default function ItemReviews({ reviews, reviewsLoading }) {
+export default function ItemReviews({ reviews, rating }) {
   const { formatMessage, locale } = useIntl();
   moment.locale(locale);
   const resolvePlural = () => {
     switch (reviews.length) {
       case 1:
-        return formatMessage({ id: 'one-rating' });
+        return formatMessage({ id: 'one-review' });
 
       case 2:
-        return formatMessage({ id: 'two-ratings' });
+        return formatMessage({ id: 'two-reviews' });
 
       case reviews.length > 10:
-        return formatMessage({ id: 'one-rating' });
+        return formatMessage({ id: 'one-review' });
 
       default:
-        return formatMessage({ id: 'ratings' });
+        return formatMessage({ id: 'reviews' });
     }
   };
-  if (reviewsLoading) {
-    return (
-      <div
-        className="w-full flex flex-col items-center justify-center "
-        style={{ height: '160px' }}
-      >
-        <h1 className="font-semibold mb-4 text-lg">
-          {formatMessage({ id: 'loading-reviews' })}
-        </h1>
-        <Loader
-          type="TailSpin"
-          color="#b72b2b"
-          height={50}
-          width={50}
-          visible={true}
-        />
-      </div>
-    );
-  }
-
-  if (!reviewsLoading && reviews.length === 0) {
-    return (
-      <div
-        style={{ height: '160px' }}
-        className="flex items-center justify-center flex-col"
-      >
-        <h1 className="text-xl mb-2">
-          {formatMessage({ id: 'no-ratings' })} !
-        </h1>
-        <h1 className="mb-2">{formatMessage({ id: 'how-to-rate' })}</h1>
-        <h1 className="mb-2">
-          <FormattedMessage
-            id="rating-guide"
-            values={{
-              link: word => (
-                <Link
-                  className="text-main-color hover:underline"
-                  to={`/${locale}/user/account/orders`}
-                >
-                  {word}
-                </Link>
-              ),
-            }}
-          />
-        </h1>
-      </div>
-    );
-  }
   return (
     <div>
-      <div className="flex items-center flex-wrap mb-2">
+      <div className="flex items-center mb-2">
         <h1 className="font-semibold text-xl">
-          {formatMessage({ id: 'single-product-average-rating' })}:
+          {formatMessage({ id: 'single-product-product-review' })}:
         </h1>
         <div className="mx-2">
           <Rating
-            initialRating={2.5}
+            initialRating={rating}
             readonly
-            emptySymbol={<AiOutlineStar className="text-main-color h-6 w-6" />}
-            fullSymbol={<AiFillStar className="text-main-color h-6 w-6" />}
+            emptySymbol={<AiOutlineStar className="text-gold h-6 w-6" />}
+            fullSymbol={<AiFillStar className="text-gold h-6 w-6" />}
             className=" pt-1"
           />
         </div>
@@ -102,7 +50,7 @@ export default function ItemReviews({ reviews, reviewsLoading }) {
             return (
               <div key={review.id}>
                 <div>
-                  <h1 className="font-semibold">{review.customer.name}</h1>
+                  <h1 className="font-semibold">{review.author}</h1>
                 </div>
                 <div className="flex items-center">
                   <Rating
@@ -114,11 +62,11 @@ export default function ItemReviews({ reviews, reviewsLoading }) {
                   />
 
                   <h1 className="text-gray-600 text-sm mx-1">
-                    {moment(review.created_at).fromNow()}
+                    {moment(review.date, 'DD-MM-YYYY').fromNow()}
                   </h1>
                 </div>
                 <div className="mb-2">
-                  <p className="">{review.review}</p>
+                  <p className="">{review.body}</p>
                 </div>
                 {i !== reviews.length - 1 && <hr className="mt-2" />}
               </div>

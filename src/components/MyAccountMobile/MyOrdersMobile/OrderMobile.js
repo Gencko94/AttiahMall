@@ -1,7 +1,7 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
 
-export default function OrderMobile({ order, setSelectedOrder }) {
+export default function OrderMobile({ order, setSelectedOrder, isLightTheme }) {
   const { formatMessage } = useIntl();
   return (
     <div className=" bg-body-light border overflow-hidden rounded-lg ">

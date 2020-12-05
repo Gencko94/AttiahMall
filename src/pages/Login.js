@@ -1,12 +1,11 @@
 import React from 'react';
-import { Link, useHistory, useLocation } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import logo from '../assets/attiah.png';
 import { Formik, useField } from 'formik';
 import * as Yup from 'yup';
 import { useIntl } from 'react-intl';
 import { AuthProvider } from '../contexts/AuthContext';
-import Loader from 'react-loader-spinner';
-import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
+import { BeatLoader } from 'react-spinners';
 import ErrorSnackbar from '../components/ErrorSnackbar';
 import login from '../assets/login.jpg';
 import { BiChevronDown } from 'react-icons/bi';
@@ -31,25 +30,21 @@ const PhoneNumberCustomInput = ({ label, value, name, ...props }) => {
       >
         {label}
       </label>
-      <div
-        className={`flex rounded-lg border relative  ${
-          meta.error && 'border-main-color'
-        }`}
-      >
+      <div className="flex rounded-lg border items-center relative  overflow-hidden ">
         <div
           ref={menuRef}
           onClick={() => setMenuOpen(!menuOpen)}
-          className=" relative cursor-pointer flex items-center p-1 border-r"
+          className="  cursor-pointer flex items-center p-1 border-r"
           style={{ width: '74px' }}
         >
           <span>+966</span>
           <BiChevronDown className="mx-1 w-5 h-5" />
           {menuOpen && (
             <div
-              className="absolute top-100 left-0 w-full border z-3 bg-body-light shadow"
+              className="absolute top-100 left-0 w-full border z-1 bg-body-light"
               style={{ width: '74px' }}
             >
-              <div className="hover:bg-main-color p-2 hover:text-main-text flex justify-start items-center">
+              <div className="hover:bg-main-color px-1 py-2 hover:text-main-text flex justify-start items-center">
                 +966
               </div>
             </div>
@@ -61,7 +56,7 @@ const PhoneNumberCustomInput = ({ label, value, name, ...props }) => {
           onBlur={e => {
             field.onBlur(e);
           }}
-          className={`w-full  p-2`}
+          className=" w-full  px-1 py-2"
         />
       </div>
       {meta.touched && meta.error ? (
@@ -90,9 +85,7 @@ const CustomTextInput = ({ label, value, name, ...props }) => {
         onBlur={e => {
           field.onBlur(e);
         }}
-        className={`${
-          meta.error && meta.touched && 'border-main-color'
-        } w-full rounded-lg border  p-2`}
+        className=" w-full rounded-lg border  px-1 py-2"
       />
       {meta.touched && meta.error ? (
         <h1 className="text-xs text-main-color mt-1">{meta.error}</h1>
@@ -107,11 +100,9 @@ const CustomTextInput = ({ label, value, name, ...props }) => {
 
 export default function Login() {
   const { formatMessage, locale } = useIntl();
-  const { userLoginMutation } = React.useContext(AuthProvider);
+  const { userLogin } = React.useContext(AuthProvider);
   const [errorOpen, setErrorOpen] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
-  const location = useLocation();
-  let { from } = location.state || { from: { pathname: `/${locale}/` } };
   const closeError = () => {
     setErrorOpen(false);
   };
@@ -137,14 +128,14 @@ export default function Login() {
         {errorOpen && (
           <ErrorSnackbar message={errorMessage} closeFunction={closeError} />
         )}
-        <div className=" rounded z-2  max-w-screen-xs w-5/6">
+        <div className=" rounded z-2  max-w-screen-xs w-5/6   overflow-hidden">
           <div className="flex items-center flex-col mb-2  rounded-lg ">
             <Link to="/">
               <img
                 src={logo}
                 alt="logo"
                 className=" mb-3"
-                style={{ width: '70px', height: '70px' }}
+                style={{ width: '50px', height: '50px' }}
               />
             </Link>
             <h2 className="text-lg text-center">
@@ -161,28 +152,19 @@ export default function Login() {
               onSubmit={async (values, actions) => {
                 setErrorOpen(false);
                 try {
-                  const res = await userLoginMutation(values);
-                  if (res.isAuthenticated === true) {
-                    history.replace(from);
+                  const res = await userLogin(values);
+                  if (res === 'ok') {
+                    history.goBack();
+                  } else {
+                    actions.setErrors({
+                      phoneNumber: formatMessage({ id: 'credentials-wrong' }),
+                      password: formatMessage({ id: 'credentials-wrong' }),
+                    });
+                    actions.setSubmitting(false);
                   }
                 } catch (error) {
-                  console.log(error.response);
-                  if (error.response?.data.message) {
-                    actions.setErrors({
-                      phoneNumber: formatMessage({
-                        id: 'invalid-credentials',
-                      }),
-                      password: formatMessage({
-                        id: 'invalid-credentials',
-                      }),
-                    });
-                    return;
-                  } else {
-                    setErrorOpen(true);
-                    setErrorMessage(
-                      formatMessage({ id: 'something-went-wrong-snackbar' })
-                    );
-                  }
+                  setErrorOpen(true);
+                  setErrorMessage('Something went wrong, Please try again');
                 }
               }}
             >
@@ -200,7 +182,7 @@ export default function Login() {
                       type="password"
                       value={values.password}
                     />
-                    <div className="mt-1">
+                    <div className=" py-1 mt-2">
                       <button
                         disabled={isSubmitting}
                         type="submit"
@@ -208,18 +190,9 @@ export default function Login() {
                           isSubmitting
                             ? 'bg-main-color cursor-not-allowed'
                             : 'bg-main-color text-second-nav-text-light hover:bg-red-800'
-                        } w-full rounded uppercase flex items-center justify-center  p-2 font-semibold  transition duration-150 `}
+                        } w-full rounded uppercase  p-2 font-semibold  transition duration-150 `}
                       >
-                        {isSubmitting && (
-                          <Loader
-                            type="ThreeDots"
-                            color="#fff"
-                            secondaryColor="black"
-                            height={24}
-                            width={24}
-                            visible={isSubmitting}
-                          />
-                        )}
+                        {isSubmitting && <BeatLoader size={10} />}
                         {!isSubmitting && formatMessage({ id: 'login-button' })}
                       </button>
                     </div>

@@ -1,11 +1,10 @@
 import { motion } from 'framer-motion';
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import cartBag from '../../assets/illustrations/cartBag.svg';
 export default function NoWishListItems() {
   const { formatMessage, locale } = useIntl();
-  const history = useHistory();
   const variants = {
     hidden: {
       opacity: 0,
@@ -26,16 +25,30 @@ export default function NoWishListItems() {
       className=" flex"
     >
       <img src={cartBag} alt="Empty Cart Bag" className=" h-32" />
-      <div className="mx-5 flex flex-col  justify-center">
+      <div className="mx-5">
         <h1 className="text-2xl font-bold ">
-          {formatMessage({ id: 'wishlist-empty' })}
+          {formatMessage({ id: 'cart-empty' })}
         </h1>
-        <button
-          onClick={() => history.push(`/${locale}`)}
-          className="rounded uppercase font-semibold p-2 mt-2 bg-green-700 text-second-nav-text-light"
+        <Link
+          to={`/${locale}`}
+          className="text-sm text-blue-600 hover:underline"
         >
-          {formatMessage({ id: 'start-shopping-now' })}
-        </button>
+          {formatMessage({ id: 'check-today-deals' })}
+        </Link>
+        <div className="flex items-center flex-wrap">
+          <Link
+            to="/app/login"
+            className={` rounded p-2 mt-2 bg-green-700 text-second-nav-text-light  `}
+          >
+            {formatMessage({ id: 'login-button' })}
+          </Link>
+          <Link
+            to="/app/register"
+            className={` rounded p-2 mt-2 bg-blue-700 text-second-nav-text-light mx-2  `}
+          >
+            {formatMessage({ id: 'register-button' })}
+          </Link>
+        </div>
       </div>
     </motion.div>
   );

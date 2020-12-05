@@ -1,32 +1,19 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
+import MultiClamp from 'react-multi-clamp';
 import { Link } from 'react-router-dom';
 import { MdClose } from 'react-icons/md';
 import cartEmptyimg from '../../assets/illustrations/cartEmpty.png';
 import { AnimatePresence, motion } from 'framer-motion';
-import { CartAndWishlistProvider } from '../../contexts/CartAndWishlistContext';
-import { AuthProvider } from '../../contexts/AuthContext';
-import Loader from 'react-loader-spinner';
-import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
-export default function SideCartMenu({ setSideMenuOpen }) {
-  const { cartItems, cartTotal } = React.useContext(CartAndWishlistProvider);
+
+export default function SideCartMenu({
+  cartItems,
+  handleRemoveFromCart,
+  setSideMenuOpen,
+  cartTotal,
+}) {
   const { formatMessage, locale } = useIntl();
-  const [
-    removeFromCartButtonLoading,
-    setRemoveFromCartButtonLoading,
-  ] = React.useState(null);
-  const { removeFromCartMutation } = React.useContext(CartAndWishlistProvider);
-  const { userId } = React.useContext(AuthProvider);
-  const handleRemoveFromCart = async (id, cart_id) => {
-    setRemoveFromCartButtonLoading(id);
-    try {
-      await removeFromCartMutation({ id, cart_id, userId });
-      setRemoveFromCartButtonLoading(null);
-    } catch (error) {
-      setRemoveFromCartButtonLoading(null);
-      console.log(error.response);
-    }
-  };
+
   const sideMenuVariants = {
     hidden: {
       x: `${locale === 'ar' ? '-100%' : '100%'}`,
@@ -93,7 +80,6 @@ export default function SideCartMenu({ setSideMenuOpen }) {
             </Link>
           </div>
         )}
-
         {cartItems.length !== 0 && (
           <div
             className="flex-1 overflow-y-auto overflow-x-hidden"
@@ -108,61 +94,53 @@ export default function SideCartMenu({ setSideMenuOpen }) {
                     animate="visible"
                     exit="exited"
                     variants={cartItemVariant}
-                    className=" side-cart-menu__item mb-2"
+                    className=" after__addToCart-related mb-2"
                   >
                     <div className="">
                       <Link
-                        title={`${item[`name_${locale}`]}`}
+                        title={item.name}
                         className="hover:underline"
-                        to={`/${locale}/c/${item.id}`}
+                        to={`/${locale}/${item.category.replace(
+                          /\s|%|,/g,
+                          '-'
+                        )}/${item.name.replace(/\s|%|,|-/g, '-')}/${item.id}`}
                       >
                         <img
-                          src={`${process.env.REACT_APP_IMAGES_URL}/medium/${item.image}`}
-                          alt={`${item[`name_${locale}`]}`}
+                          src={item.photo}
+                          alt={item.name}
                           className="max-w-full h-auto"
                         />
                       </Link>
                     </div>
                     <div className="">
                       <Link
-                        title={`${item[`name_${locale}`]}`}
+                        title={item.name}
                         className="hover:underline"
-                        to={`/${locale}/c/${item.id}`}
+                        to={`/${locale}/${item.category.replace(
+                          /\s|%|,/g,
+                          '-'
+                        )}/${item.name.replace(/\s|%|,|-/g, '-')}/${item.id}`}
                       >
-                        <h1 className="text-clamp-2 text-sm font-semibold">
-                          {`${item[`name_${locale}`]}`}
-                        </h1>
+                        <MultiClamp
+                          className="font-semibold text-sm "
+                          clamp={4}
+                          ellipsis="..."
+                        >
+                          {item.name}
+                        </MultiClamp>
                       </Link>
-                      <div className="flex items-center">
-                        <h1 className="text-xs rounded p-1 font-bold  bg-gray-200 inline">
-                          {item.price * item.qty} SAR
-                        </h1>
-                        <h1 className="mx-1 text-sm">
-                          {formatMessage({ id: 'quantity' })} : {item.qty}
-                        </h1>
-                      </div>
+
+                      <h1 className="text-xs rounded p-1 font-bold  bg-gray-200 inline">
+                        {item.price} SAR
+                      </h1>
                       <div>
                         <button
-                          className={`${
-                            removeFromCartButtonLoading === item.id
-                              ? 'bg-gray-300'
-                              : 'bg-main-color text-main-text'
-                          } text-xs rounded p-1 my-1 uppercase`}
+                          className="bg-main-color text-main-text text-xs rounded p-1 my-1"
                           onClick={() => {
-                            handleRemoveFromCart(item.id, item.cart_id);
+                            handleRemoveFromCart(item.id);
                           }}
                         >
-                          {removeFromCartButtonLoading === item.id ? (
-                            <Loader
-                              type="ThreeDots"
-                              color="#b72b2b"
-                              height={21}
-                              width={21}
-                              visible={true}
-                            />
-                          ) : (
-                            formatMessage({ id: 'remove-from-cart' })
-                          )}
+                          {formatMessage({ id: 'remove-from-cart' })}
                         </button>
                       </div>
                     </div>
@@ -172,7 +150,6 @@ export default function SideCartMenu({ setSideMenuOpen }) {
             </AnimatePresence>
           </div>
         )}
-
         <hr className="my-1" />
         {cartItems.length !== 0 && (
           <div>
@@ -183,7 +160,7 @@ export default function SideCartMenu({ setSideMenuOpen }) {
             <hr className="my-1" />
             <div className=" flex items-center my-2 text-center text-second-nav-text-light ">
               <Link
-                to={`/${locale}/checkout/guest-checkout`}
+                to={`/${locale}/checkout/guestcheckout`}
                 className={`flex-1 py-2  px-3  bg-green-700 w-full  rounded `}
               >
                 {formatMessage({ id: 'checkout' })}

@@ -23,7 +23,7 @@ export default function NoOrders({ isLightTheme }) {
               : 'bg-btn-primary-dark text-btn-secondary-dark'
           } `}
         >
-          <h1 className="mx-2 uppercase">
+          <h1 className="mx-2">
             {formatMessage({ id: 'start-shopping-now' })}
           </h1>
           <AiFillShopping className="w-20p h-20p" />

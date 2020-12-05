@@ -1,7 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import Loader from 'react-loader-spinner';
-import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
+import BeatLoader from 'react-spinners/BeatLoader';
 import mapStyles from '../helpers/mapStyles';
 import {
   GoogleMap,
@@ -26,7 +25,7 @@ const options = {
 export default function GoogleMapsAddress({ addMutation }) {
   const isTabletOrAbove = useMediaQuery({ query: '(min-width: 768px)' });
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+    googleMapsApiKey: 'AIzaSyAYprqr3Vrnmhwx9UQozUNNks7CVH9m3Xg',
     libraries,
   });
 
@@ -50,11 +49,15 @@ export default function GoogleMapsAddress({ addMutation }) {
     if (marker) {
       axios
         .get(
-          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${marker.lat},${marker.lng}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`
+          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${marker.lat},${marker.lng}&key=AIzaSyAYprqr3Vrnmhwx9UQozUNNks7CVH9m3Xg`
         )
         .then(res => {
           console.log(res.data);
-          setMarkerAddress(`${res.data.results[0].formatted_address}`);
+          setMarkerAddress(
+            `${res.data.results[0].address_components
+              .map(address => address.short_name)
+              .join(', ')}`
+          );
           setMarkerInfoWindowDetails(
             `${res.data.results[0].address_components
               .map(address => address.short_name)
@@ -78,15 +81,9 @@ export default function GoogleMapsAddress({ addMutation }) {
     return (
       <div
         className="flex justify-center items-center"
-        style={{ height: 'calc(-176px + 100vh)' }}
+        style={{ height: 'calc(-173px + 100vh)' }}
       >
-        <Loader
-          type="ThreeDots"
-          color="#b72b2b"
-          height={40}
-          width={40}
-          visible={!isLoaded}
-        />
+        <BeatLoader size={10} color={'#b72b2b'} />
       </div>
     );
   return (

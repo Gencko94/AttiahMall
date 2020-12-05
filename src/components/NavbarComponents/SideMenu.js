@@ -18,30 +18,16 @@ import { Link } from 'react-router-dom';
 import TopSection from '../SideMenuMobile/TopSection';
 import { motion } from 'framer-motion';
 import { useIntl } from 'react-intl';
-import SideMenuCategories from '../SideMenu/SideMenuCategories';
-import SideMenuLanguages from '../SideMenu/SideMenuLanguages';
-import SideMenuDeliveryCountries from '../SideMenu/SideMenuDeliveryCountries';
-import SideMenuCustomerService from '../SideMenu/SideMenuCustomerService';
-export default function SideMenu({ toggleSideMenu, sideMenuRef }) {
-  const { isAuthenticated, userLogoutMutation } = React.useContext(
-    AuthProvider
-  );
-  const {
-    categories,
-    categoriesLoading,
-    deliveryCountry,
-    deliveryCountries,
-    deliveryCountriesLoading,
-    setDeliveryCountry,
-  } = React.useContext(DataProvider);
-  const [showCategories, setShowCategories] = React.useState(false);
-  const [showLanguages, setShowLanguages] = React.useState(false);
-  const [showDeliveryCountries, setShowDeliveryCountries] = React.useState(
-    false
-  );
-  const [showCustomerService, setShowCustomerService] = React.useState(false);
+export default function SideMenu({
+  toggleSideMenu,
+  sideMenuRef,
+  isLightTheme,
+}) {
+  const { isAuthenticated, userLogout } = React.useContext(AuthProvider);
+  const { sidebarCategories } = React.useContext(DataProvider);
+  const [products, setProducts] = React.useState(false);
   const [page, setPage] = React.useState(0);
-  const [subCategory, setSubCategory] = React.useState(0);
+  const [subPage, setSubPage] = React.useState(0);
   const [secondSubPage, setSecondSubPage] = React.useState(0);
   const innerRef = React.useRef(null);
   const { locale, formatMessage } = useIntl();
@@ -49,7 +35,7 @@ export default function SideMenu({ toggleSideMenu, sideMenuRef }) {
   const handleClickBackFirst = () => {
     setPage(page - 1);
     setTimeout(() => {
-      setShowCategories(false);
+      setProducts(false);
     }, 400);
   };
   const handleClickBackSecond = i => {
@@ -57,48 +43,12 @@ export default function SideMenu({ toggleSideMenu, sideMenuRef }) {
     setSecondSubPage(i);
   };
   const handleClickNextZero = () => {
-    if (categoriesLoading) {
-      return;
-    }
     setPage(page + 1);
-    setShowCategories(true);
-  };
-  const handleShowLanguages = () => {
-    setPage(page + 1);
-    setShowLanguages(true);
-  };
-  const handleHideLanguages = () => {
-    setPage(page - 1);
-    setTimeout(() => {
-      setShowLanguages(false);
-    }, 400);
-  };
-  const handleShowDeliveryCountries = () => {
-    if (deliveryCountriesLoading) {
-      return;
-    }
-    setPage(page + 1);
-    setShowDeliveryCountries(true);
-  };
-  const handleHideDeliveryCountries = () => {
-    setPage(page - 1);
-    setTimeout(() => {
-      setShowDeliveryCountries(false);
-    }, 400);
-  };
-  const handleShowCustomerService = () => {
-    setPage(page + 1);
-    setShowCustomerService(true);
-  };
-  const handleHideCustomerService = () => {
-    setPage(page - 1);
-    setTimeout(() => {
-      setShowCustomerService(false);
-    }, 400);
+    setProducts(true);
   };
   const handleClickNextFirst = i => {
     setPage(page + 1);
-    setSubCategory(i);
+    setSubPage(i);
   };
   const handleClickNextSecond = i => {
     setPage(page + 1);
@@ -160,20 +110,20 @@ export default function SideMenu({ toggleSideMenu, sideMenuRef }) {
       animate="to"
       exit="exited"
       ref={sideMenuRef}
-      className={`
-        
-         bg-side-light text-side-light-text
-         
-        z-30  fixed top-0 ${
-          locale === 'ar' ? 'right-0' : 'left-0'
-        } min-w-75p h-screen sm:text-lg`}
+      className={`${
+        isLightTheme
+          ? 'bg-side-light text-side-light-text'
+          : 'bg-side-dark text-side-dark-text'
+      }  z-20  fixed top-0 ${
+        locale === 'ar' ? 'right-0' : 'left-0'
+      } min-w-75p h-screen sm:text-lg`}
       style={{ maxWidth: '75%' }}
     >
-      <TopSection toggleSideMenu={toggleSideMenu} />
+      <TopSection isLightTheme={isLightTheme} toggleSideMenu={toggleSideMenu} />
 
       <div className="relative overflow-hidden mt-2 ">
         <div ref={innerRef} className="sidebar__inner  ">
-          <div className="sidebar-first__page ">
+          <div className="sidebar-first ">
             <motion.button
               key="allCategories"
               variants={childVariants}
@@ -246,83 +196,68 @@ export default function SideMenu({ toggleSideMenu, sideMenuRef }) {
               </div>
             </motion.button>
             <hr />
-            {isAuthenticated && (
-              <motion.button
-                key="wishlist"
-                variants={childVariants}
-                onClick={toggleSideMenu}
-                className="py-2 px-2 mb-2  "
-              >
-                <Link to={`/${locale}/wishlist`} className="flex items-center">
-                  <AiOutlineHeart className=" w-25p h-25p" />
-                  <h1 className="mx-2">{formatMessage({ id: 'wishlist' })}</h1>
-                </Link>
-              </motion.button>
-            )}
-            {isAuthenticated && (
-              <motion.button
-                key="viewedItems"
-                variants={childVariants}
-                onClick={toggleSideMenu}
-                className="py-2 px-2 mb-2    "
-              >
-                <Link
-                  to={`/${locale}/vieweditems`}
-                  className="flex items-center"
-                >
-                  <AiOutlineEye className=" w-25p h-25p" />
-                  <h1 className="mx-2 whitespace-no-wrap">
-                    {formatMessage({ id: 'viewed-items' })}
-                  </h1>
-                </Link>
-              </motion.button>
-            )}
+            <motion.button
+              key="wishlist"
+              variants={childVariants}
+              onClick={toggleSideMenu}
+              className="py-2 px-2 mb-2    "
+            >
+              <div className=" flex items-center">
+                <AiOutlineHeart className=" w-25p h-25p" />
+                <h1 className="mx-2">{formatMessage({ id: 'wishlist' })}</h1>
+              </div>
+            </motion.button>
+            <motion.button
+              key="viewedItems"
+              variants={childVariants}
+              onClick={toggleSideMenu}
+              className="py-2 px-2 mb-2    "
+            >
+              <div className=" flex items-center">
+                <AiOutlineEye className=" w-25p h-25p" />
+                <h1 className="mx-2 whitespace-no-wrap">
+                  {formatMessage({ id: 'viewed-items' })}
+                </h1>
+              </div>
+            </motion.button>
             <hr />
             <motion.button
               key="deliverTo"
               variants={childVariants}
-              onClick={handleShowDeliveryCountries}
-              className="p-2 mb-2"
+              onClick={toggleSideMenu}
+              className="py-2 px-2 mb-2    "
             >
-              <div className=" flex items-center justify-between">
-                <div className="flex items-center">
-                  <MdLocationOn className=" w-25p h-25p" />
-                  <h1 className="mx-2">
-                    {formatMessage({ id: 'deliver-to' })} :{' '}
-                    {deliveryCountry?.translation[locale].name}
-                  </h1>
-                </div>
-                {locale === 'ar' ? <BsChevronLeft /> : <BsChevronRight />}
+              <div className=" flex items-center">
+                <MdLocationOn className=" w-25p h-25p" />
+                <h1 className="mx-2">
+                  {formatMessage({ id: 'deliver-to' })} : Saudi Arabia
+                </h1>
               </div>
             </motion.button>
             <motion.button
               key="customerService"
               variants={childVariants}
-              onClick={handleShowCustomerService}
-              className="p-2 mb-2"
+              onClick={toggleSideMenu}
+              className="py-2 px-2 mb-2"
             >
-              <div className=" flex items-center justify-between">
-                <div className="flex items-center">
-                  <RiCustomerServiceFill className=" w-25p h-25p" />
-                  <h1 className="mx-2">
-                    {formatMessage({ id: 'customer-service' })}
-                  </h1>
-                </div>
-                {locale === 'ar' ? <BsChevronLeft /> : <BsChevronRight />}
+              <div className=" flex items-center">
+                <RiCustomerServiceFill className=" w-25p h-25p" />
+                <h1 className="mx-2">
+                  {formatMessage({ id: 'customer-service' })}
+                </h1>
               </div>
             </motion.button>
             <hr />
             <motion.button
               key="language"
               variants={childVariants}
-              onClick={handleShowLanguages}
-              className="py-2 px-2 mb-2 flex items-center justify-between "
+              onClick={toggleSideMenu}
+              className="py-2 px-2 mb-2"
             >
               <div className=" flex items-center">
                 <FaLanguage className=" w-25p h-25p" />
                 <h1 className="mx-2">{formatMessage({ id: 'language' })}</h1>
               </div>
-              {locale === 'ar' ? <BsChevronLeft /> : <BsChevronRight />}
             </motion.button>
             {isAuthenticated && (
               <motion.button
@@ -330,7 +265,7 @@ export default function SideMenu({ toggleSideMenu, sideMenuRef }) {
                 variants={childVariants}
                 onClick={() => {
                   toggleSideMenu();
-                  userLogoutMutation();
+                  userLogout();
                 }}
                 className="py-2 px-2 mb-2"
               >
@@ -341,35 +276,82 @@ export default function SideMenu({ toggleSideMenu, sideMenuRef }) {
               </motion.button>
             )}
           </div>
-          {showCategories && (
-            <SideMenuCategories
-              handleClickBackFirst={handleClickBackFirst}
-              handleClickBackSecond={handleClickBackSecond}
-              handleClickNextFirst={handleClickNextFirst}
-              handleClickNextSecond={handleClickNextSecond}
-              secondSubPage={secondSubPage}
-              subCategory={subCategory}
-              categories={categories}
-            />
-          )}
-          {showLanguages && (
-            <SideMenuLanguages handleHideLanguages={handleHideLanguages} />
-          )}
-          {showDeliveryCountries && (
-            <SideMenuDeliveryCountries
-              handleHideDeliveryCountries={handleHideDeliveryCountries}
-              deliveryCountries={deliveryCountries}
-              deliveryCountry={deliveryCountry}
-              setDeliveryCountry={setDeliveryCountry}
-            />
-          )}
-          {showCustomerService && (
-            <SideMenuCustomerService
-              handleHideCustomerService={handleHideCustomerService}
-              deliveryCountries={deliveryCountries}
-              deliveryCountry={deliveryCountry}
-              setDeliveryCountry={setDeliveryCountry}
-            />
+          {products && (
+            <>
+              <div className="sidebar-second">
+                <button
+                  onClick={handleClickBackFirst}
+                  className="py-2 px-2 mb-2   "
+                >
+                  {formatMessage({ id: 'go-back' })}
+                </button>
+                <hr />
+                {sidebarCategories.map((category, i) => {
+                  return (
+                    <button
+                      onClick={() => handleClickNextFirst(i)}
+                      key={category.title}
+                      className="py-2 px-2 mb-2 flex items-center  justify-between"
+                    >
+                      <div className=" flex items-center">
+                        <CgProfile className="mr-2 w-25p h-25p" />
+                        <h1>{category.title}</h1>
+                      </div>
+                      {locale === 'ar' ? <BsChevronLeft /> : <BsChevronRight />}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="sidebar-second">
+                <button
+                  onClick={() => handleClickBackSecond(subPage)}
+                  className="py-2 px-2 mb-2    "
+                >
+                  {formatMessage({ id: 'go-back' })}
+                </button>
+                <hr />
+                {sidebarCategories[subPage].sub.map((category, i) => {
+                  return (
+                    <button
+                      onClick={() => handleClickNextSecond(i)}
+                      key={i}
+                      className="py-2 px-2 mb-2 flex items-center  justify-between"
+                    >
+                      <div className=" flex items-center">
+                        <CgProfile className="mr-2 w-25p h-25p" />
+                        <h1>{category.title}</h1>
+                      </div>
+                      {locale === 'ar' ? <BsChevronLeft /> : <BsChevronRight />}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="sidebar-second">
+                {/* third flex div aka third page */}
+                <button
+                  onClick={() => handleClickBackSecond(secondSubPage)}
+                  className="py-2 px-2 mb-2    "
+                >
+                  {formatMessage({ id: 'go-back' })}
+                </button>
+                <hr />
+                {sidebarCategories[subPage].sub[secondSubPage].sub.map(
+                  (category, i) => {
+                    return (
+                      <button
+                        key={i}
+                        className="py-2 px-2 mb-2 flex items-center  justify-between"
+                      >
+                        <div className=" flex items-center">
+                          <CgProfile className="mr-2 w-25p h-25p" />
+                          <h1>{category}</h1>
+                        </div>
+                      </button>
+                    );
+                  }
+                )}
+              </div>
+            </>
           )}
         </div>
       </div>

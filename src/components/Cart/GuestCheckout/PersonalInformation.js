@@ -8,8 +8,10 @@ export default function PersonalInformation({
   handleStepBack,
 }) {
   const [personalInfo, setPersonalInfo] = React.useState({
-    fullName: '',
+    firstName: '',
+    lastName: '',
     phoneNumber: '',
+    detailedAddress: '',
   });
   const paymentMethodOptions = [
     { name: 'K-net', photo: knet },
@@ -36,15 +38,23 @@ export default function PersonalInformation({
         <div className="quick-checkout-personal-info__container p-2">
           <div className="flex flex-col justify-center font-semibold text-sm  ">
             <div className=" mb-4 relative  ">
-              <h1>Full Name</h1>
+              <h1>First Name</h1>
               <input
                 className=" mt-1 w-full rounded border   p-2"
                 type="text"
-                value={personalInfo.fullName}
-                onChange={e => handleInputChange(e, 'fullName')}
+                value={personalInfo.firstName}
+                onChange={e => handleInputChange(e, 'email')}
               />
             </div>
-
+            <div className="relative  mb-4 ">
+              <h1>Last Name</h1>
+              <input
+                className=" mt-1 w-full rounded border  p-2  "
+                type="password"
+                value={personalInfo.lastName}
+                onChange={e => handleInputChange(e, 'password')}
+              />
+            </div>
             <div className="relative  mb-4 ">
               <h1>Phone Number</h1>
               <input
@@ -52,6 +62,15 @@ export default function PersonalInformation({
                 type="text"
                 value={personalInfo.lastName}
                 onChange={e => handleInputChange(e, 'phoneNumber')}
+              />
+            </div>
+            <div className="relative">
+              <h1>Apartment/Flat Number, Tower Number, Building Name</h1>
+              <input
+                className=" mt-1 w-full rounded border  p-2  "
+                type="text"
+                value={personalInfo.detailedAddress}
+                onChange={e => handleInputChange(e, 'detailedAddress')}
               />
             </div>
           </div>

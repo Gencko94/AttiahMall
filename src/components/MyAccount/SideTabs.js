@@ -10,6 +10,7 @@ export default function SideTabs({ isLightTheme }) {
     { url: '', name: 'my-profile' },
     { url: '/addresses', name: 'my-addresses' },
     { url: '/orders', name: 'my-orders' },
+    { url: '/paymentdetails', name: 'my-payment-details' },
   ];
 
   const { url } = useRouteMatch();

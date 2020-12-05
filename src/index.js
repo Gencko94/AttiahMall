@@ -8,11 +8,10 @@ import DataContextProvider from './contexts/DataContext';
 
 import SearchContext from './contexts/SearchContext';
 import AuthContext from './contexts/AuthContext';
-import CartAndWishlistContext from './contexts/CartAndWishlistContext';
 
-const localCart = localStorage.getItem('localCart');
+const localCart = localStorage.getItem('cartItems');
 if (!localCart) {
-  localStorage.setItem('localCart', JSON.stringify([]));
+  localStorage.setItem('cartItems', JSON.stringify([]));
 }
 const localWish = localStorage.getItem('localWish');
 if (!localWish) {
@@ -30,26 +29,19 @@ const myLocalLocations = localStorage.getItem('myLocalLocations');
 if (!myLocalLocations) {
   localStorage.setItem('myLocalLocations', JSON.stringify([]));
 }
-const deliveryCountry = localStorage.getItem('deliveryCountry');
-if (!deliveryCountry) {
-  localStorage.setItem(
-    'deliveryCountry',
-    JSON.stringify({ deliveryCountry: { en: 'Kuwait', ar: 'الكويت' } })
-  );
-}
 
-// const localAuthenticated = localStorage.getItem('localAuthenticated');
-// if (!localAuthenticated) {
-//   localStorage.setItem('localAuthenticated', false);
-// }
+const localAuthenticated = localStorage.getItem('localAuthenticated');
+if (!localAuthenticated) {
+  localStorage.setItem('localAuthenticated', false);
+}
 ReactDOM.render(
   <AuthContext>
     <DataContextProvider>
-      <CartAndWishlistContext>
-        <SearchContext>
+      <SearchContext>
+        <div className={` antialiased relative`}>
           <App />
-        </SearchContext>
-      </CartAndWishlistContext>
+        </div>
+      </SearchContext>
     </DataContextProvider>
   </AuthContext>,
 

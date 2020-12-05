@@ -11,7 +11,7 @@ export default function NavLogoMobile() {
         <img
           src={logo}
           alt="attiah-logo"
-          style={{ width: '50', height: '50px' }}
+          style={{ width: '40px', height: '40px' }}
         />
       </Link>
     </div>

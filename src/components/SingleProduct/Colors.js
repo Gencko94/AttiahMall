@@ -1,14 +1,7 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
 
-export default function Colors({
-  colors,
-  availableColors,
-  setColor,
-  color,
-  data,
-  setSelectedVariant,
-}) {
+export default function Colors({ colors, availableColors, setColor, color }) {
   const { formatMessage } = useIntl();
   return (
     <div>
@@ -16,15 +9,11 @@ export default function Colors({
         {formatMessage({ id: 'single-product-color' })}:
       </h1>
       <div className="single-product-sizes__container">
-        {data.map((variation, i) => {
-          // const available = availableColors.includes(iColor);
+        {colors.map(iColor => {
+          const available = availableColors.includes(iColor);
           return (
-            <button
-              onClick={() => setSelectedVariant(i)}
-              key={variation.id}
-              // className={`${!available && 'color-disabled'}`}
-            >
-              {/* <button
+            <div key={iColor} className={`${!available && 'color-disabled'}`}>
+              <button
                 onClick={() => setColor(iColor)}
                 disabled={!available}
                 className={`${
@@ -35,13 +24,8 @@ export default function Colors({
                   color === iColor ? 'border-main-color border' : 'border'
                 } text-sm text-center w-full h-full `}
                 style={{ backgroundColor: iColor }}
-              ></button> */}
-              <img
-                alt={variation.id}
-                style={{ width: '50px', height: '75px' }}
-                src={`${process.env.REACT_APP_IMAGES_URL}/original/${variation.image.link}`}
-              />
-            </button>
+              ></button>
+            </div>
           );
         })}
       </div>

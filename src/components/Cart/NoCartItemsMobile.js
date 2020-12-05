@@ -37,13 +37,13 @@ export default function NoCartItems() {
         </Link>
         <div className="flex items-center flex-wrap">
           <Link
-            to={`/${locale}/app/login`}
+            to="/app/login"
             className={` rounded p-2 mt-2 bg-green-700 text-second-nav-text-light  `}
           >
             {formatMessage({ id: 'login-button' })}
           </Link>
           <Link
-            to={`/${locale}/app/register`}
+            to="/app/register"
             className={` rounded p-2 mt-2 bg-blue-700 text-second-nav-text-light mx-2  `}
           >
             {formatMessage({ id: 'register-button' })}

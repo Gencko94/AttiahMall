@@ -1,8 +1,8 @@
 import React from 'react';
-import AddressMobile from '../components/CartMobile/GuestCheckoutMobile/AddressMobile';
-import OrderPlacedMobile from '../components/CartMobile/GuestCheckoutMobile/OrderPlacedMobile';
-import PersonalInformationMobile from '../components/CartMobile/GuestCheckoutMobile/PersonalInformationMobile';
-import StepperMobile from '../components/CartMobile/GuestCheckoutMobile/StepperMobile';
+import AddressMobile from '../components/Cart/GuestCheckoutMobile/AddressMobile';
+import OrderPlacedMobile from '../components/Cart/GuestCheckoutMobile/OrderPlacedMobile';
+import PersonalInformationMobile from '../components/Cart/GuestCheckoutMobile/PersonalInformationMobile';
+import StepperMobile from '../components/Cart/GuestCheckoutMobile/StepperMobile';
 import LayoutMobile from '../components/LayoutMobile';
 
 export default function GuestCheckOutMobile() {

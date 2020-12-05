@@ -4,7 +4,7 @@ import { FaTwitter } from 'react-icons/fa';
 import { FaInstagram } from 'react-icons/fa';
 import { FaLinkedin } from 'react-icons/fa';
 import { useIntl } from 'react-intl';
-import attiahlogo from '../../assets/attiah.png';
+import logoattiah from '../../assets/attiah.png';
 export default function ThirdSection() {
   const { formatMessage } = useIntl();
   return (
@@ -25,9 +25,9 @@ export default function ThirdSection() {
       </div>
       <div className=" px-4 py-2 flex justify-start items-end ">
         <img
-          src={attiahlogo}
+          src={logoattiah}
           alt="logo"
-          style={{ width: '50px', height: '50px' }}
+          style={{ width: '40px', height: '40px' }}
         />
 
         <h1 className=" font-semibold text-xs text-right mx-4">

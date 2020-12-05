@@ -1,12 +1,11 @@
 import { Formik, useField } from 'formik';
 import React from 'react';
-import { Link, useHistory, useLocation } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import logo from '../assets/attiah.png';
 import * as Yup from 'yup';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { AuthProvider } from '../contexts/AuthContext';
-import Loader from 'react-loader-spinner';
-import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
+import { BeatLoader } from 'react-spinners';
 import ErrorSnackbar from '../components/ErrorSnackbar';
 import { BiChevronDown } from 'react-icons/bi';
 import useClickAway from '../hooks/useClickAway';
@@ -30,11 +29,7 @@ const PhoneNumberCustomInput = ({ label, value, name, ...props }) => {
       >
         {label}
       </label>
-      <div
-        className={`${
-          meta.error && 'border-main-color'
-        } flex rounded-lg border items-center relative  overflow-hidden `}
-      >
+      <div className="flex rounded-lg border items-center relative  overflow-hidden ">
         <div
           ref={menuRef}
           onClick={() => setMenuOpen(!menuOpen)}
@@ -60,7 +55,7 @@ const PhoneNumberCustomInput = ({ label, value, name, ...props }) => {
           onBlur={e => {
             field.onBlur(e);
           }}
-          className={` w-full  p-2`}
+          className=" w-full  px-1 py-2"
         />
       </div>
       {meta.touched && meta.error ? (
@@ -90,9 +85,7 @@ const CustomTextInput = ({ label, value, name, ...props }) => {
         onBlur={e => {
           field.onBlur(e);
         }}
-        className={`${
-          meta.error && meta.touched && 'border-main-color'
-        } w-full rounded-lg border  p-2`}
+        className=" w-full rounded-lg border  px-1 py-2"
       />
       {meta.touched && meta.error ? (
         <h1 className="text-xs text-main-color mt-1">{meta.error}</h1>
@@ -107,11 +100,9 @@ const CustomTextInput = ({ label, value, name, ...props }) => {
 
 export default function Register() {
   const { formatMessage, locale } = useIntl();
-  const { userRegisterMutation } = React.useContext(AuthProvider);
+  const { userRegister } = React.useContext(AuthProvider);
   const [errorOpen, setErrorOpen] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
-  const location = useLocation();
-  let { from } = location.state || { from: { pathname: `/${locale}/` } };
   const closeError = () => {
     setErrorOpen(false);
   };
@@ -149,9 +140,12 @@ export default function Register() {
                 src={logo}
                 alt="logo"
                 className=" mb-3"
-                style={{ width: '70px', height: '70px' }}
+                style={{ width: '50px', height: '50px' }}
               />
             </Link>
+            <h2 className="text-lg text-center">
+              {formatMessage({ id: 'register-on-attiah' })}
+            </h2>
           </div>
           <div className="rounded-lg border bg-gray-100 mb-2">
             <Formik
@@ -162,26 +156,17 @@ export default function Register() {
                 phoneNumber: '',
               }}
               validationSchema={validationSchema}
-              onSubmit={async (values, actions) => {
+              onSubmit={async (values, { resetForm }) => {
                 setErrorOpen(false);
                 try {
-                  const res = await userRegisterMutation(values);
-                  if (res.isAuthenticated === true) {
-                    history.replace(from);
+                  const res = await userRegister(values);
+                  if (res === 'ok') {
+                    resetForm();
+                    history.goBack();
                   }
                 } catch (error) {
-                  console.log(error.response);
-                  if (error.response?.data.message) {
-                    actions.setErrors({
-                      email: error.response.data.message.email?.[0],
-                      phoneNumber: error.response.data.message.mobile?.[0],
-                    });
-                    return;
-                  }
                   setErrorOpen(true);
-                  setErrorMessage(
-                    formatMessage({ id: 'something-went-wrong-snackbar' })
-                  );
+                  setErrorMessage('Something went wrong, Please try again');
                 }
               }}
             >
@@ -215,23 +200,13 @@ export default function Register() {
 
                     <div className="mt-1">
                       <button
-                        type="submit"
                         className={`${
                           isSubmitting
                             ? 'bg-main-color cursor-not-allowed'
                             : 'bg-main-color text-second-nav-text-light hover:bg-red-800'
-                        } w-full rounded flex items-center justify-center  p-2 font-semibold  transition duration-150 uppercase `}
+                        } w-full rounded text-sm  p-2 font-semibold  transition duration-150 uppercase `}
                       >
-                        {isSubmitting && (
-                          <Loader
-                            type="ThreeDots"
-                            color="#fff"
-                            secondaryColor="black"
-                            height={24}
-                            width={24}
-                            visible={isSubmitting}
-                          />
-                        )}
+                        {isSubmitting && <BeatLoader size={10} />}
                         {!isSubmitting &&
                           formatMessage({ id: 'register-button' })}
                       </button>

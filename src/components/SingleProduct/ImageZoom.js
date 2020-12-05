@@ -1,82 +1,65 @@
 import React from 'react';
+import Slider from 'react-slick';
 // import ReactImageMagnify from 'react-image-magnify';
 // import 'react-inner-image-zoom/lib/InnerImageZoom/styles.css';
-// import Zoom from 'react-medium-image-zoom';
+import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
-import SwiperCore, { Thumbs, Navigation, Zoom } from 'swiper';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/swiper-bundle.css';
+
+// import { useMediaQuery } from 'react-responsive';
 import { useIntl } from 'react-intl';
-SwiperCore.use([Thumbs, Navigation, Zoom]);
-export default function ImageZoom({ data, selectedVariation }) {
-  const [thumbsSwiper, setThumbsSwiper] = React.useState(null);
+export default function ImageZoom({ data: { name, images } }) {
+  const sliderRef = React.useRef();
+
   const { locale } = useIntl();
+  const [currentSlide, setCurrentSlide] = React.useState(0);
+  const mainSettings = {
+    arrows: false,
+    infinite: true,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
+  const handleChangeSlide = React.useCallback(i => {
+    sliderRef.current.slickGoTo(i);
+    setCurrentSlide(i);
+  }, []);
 
   return (
     <div className="sticky" style={{ alignSelf: 'self-start', top: '130px' }}>
-      <div className={`${locale === 'ar' ? 'mr-16' : 'ml-16'}`}>
-        <Swiper
-          id="main"
-          zoom
-          slidesPerView={1}
-          thumbs={{ swiper: thumbsSwiper }}
-        >
-          {data.type === 'simple' ? (
-            [data.image, ...data.gallery].map(item => {
-              console.log(item.id);
-              return (
-                <SwiperSlide zoom key={item.id}>
-                  <img
-                    src={`${process.env.REACT_APP_IMAGES_URL}/original/${item.link}`}
-                    alt={data.name}
-                  />
-                </SwiperSlide>
-              );
-            })
-          ) : (
-            <div>
-              <img
-                src={`${process.env.REACT_APP_IMAGES_URL}/original/${data.variation_addons[selectedVariation].image.link}`}
-                alt={data.name}
-              />
-            </div>
-          )}
-        </Swiper>
-      </div>
-      <div
-        className={`absolute top-0  ${locale === 'ar' ? 'right-0' : 'left-0'}`}
+      <Slider
+        ref={slider => (sliderRef.current = slider)}
+        {...mainSettings}
+        className={`${locale === 'ar' ? 'mr-16' : 'ml-16'}`}
       >
-        <Swiper
-          id="thumbs"
-          onSwiper={setThumbsSwiper}
-          direction="vertical"
-          slidesPerView="auto"
-          freeMode={true}
-          spaceBetween={10}
-          watchSlidesVisibility
-          watchSlidesProgress
-        >
-          {data.type === 'simple' ? (
-            [data.image, ...data.gallery].map((item, i) => {
-              return (
-                <SwiperSlide key={item.id}>
-                  <img
-                    src={`${process.env.REACT_APP_IMAGES_URL}/original/${item.link}`}
-                    alt={item.id}
-                    style={{ width: '50px', height: '50px' }}
-                  />
-                </SwiperSlide>
-              );
-            })
-          ) : (
-            <div>
+        {images.map((photo, i) => {
+          return (
+            <div key={i}>
+              <Zoom>
+                <img src={photo} alt={name} />
+              </Zoom>
+            </div>
+          );
+        })}
+      </Slider>
+      <div
+        className={`absolute top-0  grid grid-cols-1 gap-2 ${
+          locale === 'ar' ? 'right-0' : 'left-0'
+        }`}
+      >
+        {images.map((photo, i) => {
+          return (
+            <div key={i}>
               <img
-                src={`${process.env.REACT_APP_IMAGES_URL}/small/${data.variation_addons[selectedVariation].image.link}`}
-                alt={data.name}
+                onClick={() => handleChangeSlide(i)}
+                src={photo}
+                alt={name}
+                className={`${
+                  currentSlide === i ? 'border border-red-700' : ''
+                }`}
+                style={{ width: '50px', height: '50px' }}
               />
             </div>
-          )}
-        </Swiper>
+          );
+        })}
       </div>
     </div>
   );

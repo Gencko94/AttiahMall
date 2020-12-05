@@ -1,8 +1,7 @@
 import { Formik, useField } from 'formik';
 import React from 'react';
 import { useIntl } from 'react-intl';
-import Loader from 'react-loader-spinner';
-import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
+import { MoonLoader } from 'react-spinners';
 import * as Yup from 'yup';
 import { BiChevronDown } from 'react-icons/bi';
 import useClickAway from '../hooks/useClickAway';
@@ -16,17 +15,17 @@ export default function LocationForm({
   const [defaultLocationChecked, setDefaultLocationChecked] = React.useState(
     false
   );
+  const [userTypedLocation, setUserTypedLocation] = React.useState('');
   const validationSchema = Yup.object({
-    apartmentOrHouseNumber: Yup.number().required(
+    apartmentOrHouseNumber: Yup.string().required(
       formatMessage({ id: 'apartment-empty' })
     ),
-    buildingOrTowerNumber: Yup.number().required(
+    buildingOrTowerNumber: Yup.string().required(
       formatMessage({ id: 'building-empty' })
     ),
     phoneNumber: Yup.string()
       .matches(/^\d+$/, formatMessage({ id: 'number-only' }))
       .required(formatMessage({ id: 'phone-empty' })),
-    additionalDetails: Yup.string(),
   });
   return (
     <div>
@@ -34,28 +33,39 @@ export default function LocationForm({
         <h1>{formatMessage({ id: 'location-details' })}</h1>
       </div>
       <div className="p-2">
+        <div className="mb-1">
+          <h1>
+            {formatMessage({
+              id: 'maps-detailed-address-street_neighborhood_governate',
+            })}
+          </h1>
+          <textarea
+            rows="3"
+            className=" mt-1 w-full rounded border  p-1  "
+            type="textarea"
+            value={markerAddress || userTypedLocation}
+            readOnly={markerAddress}
+            onChange={e => setUserTypedLocation(e.target.value)}
+          />
+        </div>
         <Formik
           initialValues={{
             apartmentOrHouseNumber: '',
             buildingOrTowerNumber: '',
             phoneNumber: '',
-            additionalDetails: '',
           }}
           validationSchema={validationSchema}
           onSubmit={async values => {
-            try {
-              await addMutation({
-                lat: marker.lat,
-                lng: marker.lng,
-                defaultLocation: defaultLocationChecked,
-                addressDetails: {
-                  ...values,
-                  markerAddress: markerAddress,
-                },
-              });
-            } catch (error) {
-              console.log(error.response);
-            }
+            await addMutation({
+              lat: marker?.lat,
+              lng: marker?.lng,
+              defaultLocation: defaultLocationChecked,
+              addressDetails: {
+                ...values,
+                markerAddress,
+                userTypedLocation,
+              },
+            });
           }}
         >
           {({ handleSubmit, values, isSubmitting }) => {
@@ -65,9 +75,6 @@ export default function LocationForm({
                   label={formatMessage({
                     id: 'maps-detailed-address-apartment',
                   })}
-                  placeholder={formatMessage({
-                    id: 'maps-detailed-address-apartment-placeholder',
-                  })}
                   name="apartmentOrHouseNumber"
                   value={values.apartmentOrHouseNumber}
                   type="text"
@@ -76,28 +83,12 @@ export default function LocationForm({
                   label={formatMessage({
                     id: 'maps-detailed-address-building',
                   })}
-                  placeholder={formatMessage({
-                    id: 'maps-detailed-address-building-placeholder',
-                  })}
                   name="buildingOrTowerNumber"
                   value={values.buildingOrTowerNumber}
                   type="text"
                 />
-                <CustomTextAreaInput
-                  label={formatMessage({
-                    id: 'maps-details-extra-details',
-                  })}
-                  placeholder={formatMessage({
-                    id: 'maps-details-extra-details-placeholder',
-                  })}
-                  name="additionalDetails"
-                  value={values.additionalDetails}
-                />
                 <PhoneNumberCustomInput
                   label={formatMessage({ id: 'maps-detailed-address-phone' })}
-                  placeholder={formatMessage({
-                    id: 'maps-detailed-address-phone-placeholder',
-                  })}
                   name="phoneNumber"
                   value={values.phoneNumber}
                   type="text"
@@ -117,9 +108,9 @@ export default function LocationForm({
                   </div>
                   <button
                     type="submit"
-                    disabled={!markerAddress}
+                    disabled={!markerAddress && !userTypedLocation}
                     className={`${
-                      !markerAddress
+                      !markerAddress && !userTypedLocation
                         ? 'btn-disabled'
                         : isSubmitting
                         ? 'bg-gray-300 text-main-text'
@@ -127,13 +118,7 @@ export default function LocationForm({
                     }   p-2 rounded  w-full  flex items-center justify-center font-semibold`}
                   >
                     {isSubmitting ? (
-                      <Loader
-                        type="ThreeDots"
-                        color="#b72b2b"
-                        height={20}
-                        width={20}
-                        visible={isSubmitting}
-                      />
+                      <MoonLoader size={19} color="#b72b2b" />
                     ) : (
                       <h1>{formatMessage({ id: 'confirm-location' })}</h1>
                     )}
@@ -173,35 +158,9 @@ const CustomTextInput = ({ label, value, name, ...props }) => {
     </div>
   );
 };
-const CustomTextAreaInput = ({ label, value, name, ...props }) => {
-  const [field] = useField(name);
-  const { formatMessage } = useIntl();
-  return (
-    <div className="w-full mb-2 relative">
-      <div className="flex items-center">
-        <label htmlFor={name} className={`text-sm font-semibold text-gray-700`}>
-          {label}
-        </label>
-        <h1 className="text-xs italic mx-3">
-          ({formatMessage({ id: 'maps-details-optional' })})
-        </h1>
-      </div>
-      <textarea
-        rows={3}
-        {...field}
-        {...props}
-        onBlur={e => {
-          field.onBlur(e);
-        }}
-        className=" w-full rounded-sm border   p-1"
-      />
-    </div>
-  );
-};
 const PhoneNumberCustomInput = ({ label, value, name, ...props }) => {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const menuRef = React.useRef();
-
   useClickAway(menuRef, () => {
     if (menuRef.current) {
       setMenuOpen(false);
@@ -213,7 +172,6 @@ const PhoneNumberCustomInput = ({ label, value, name, ...props }) => {
       <label htmlFor={name} className={`text-sm font-semibold text-gray-700`}>
         {label}
       </label>
-
       <div className="flex rounded-sm border items-center relative  ">
         <div
           ref={menuRef}
@@ -240,7 +198,7 @@ const PhoneNumberCustomInput = ({ label, value, name, ...props }) => {
           onBlur={e => {
             field.onBlur(e);
           }}
-          className=" w-full p-1 "
+          className=" w-full p-1"
         />
       </div>
       {meta.touched && meta.error ? (

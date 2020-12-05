@@ -3,13 +3,14 @@ import { DataProvider } from '../../contexts/DataContext';
 import useClickAway from '../../hooks/useClickAway';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useIntl } from 'react-intl';
-import LazyLoad from 'react-lazyload';
 
 export default function DeliverTo() {
   const {
     deliveryCountry,
     setDeliveryCountry,
-    deliveryCountries,
+    flags,
+    countries,
+    isLightTheme,
   } = React.useContext(DataProvider);
   const { locale, formatMessage } = useIntl();
   const [countryListOpen, setCountryListOpen] = React.useState(false);
@@ -22,27 +23,12 @@ export default function DeliverTo() {
   const toggleCountryList = () => {
     setCountryListOpen(!countryListOpen);
   };
-  const handleChangeDeliveryCountry = country => {
-    localStorage.setItem(
-      'deliveryCountry',
-      JSON.stringify({
-        deliveryCountry: {
-          en: country.translation.en.name,
-          ar: country.translation.ar.name,
-        },
-      })
-    );
-    setDeliveryCountry(country);
-  };
   const countryListVariants = {
     hidden: {
       height: 0,
     },
     visible: {
       height: 'auto',
-      transition: {
-        type: 'tween',
-      },
     },
     exited: {
       opacity: 0,
@@ -52,30 +38,12 @@ export default function DeliverTo() {
     },
   };
   return (
-    <div>
+    <div className=" p-1">
       <button
         onClick={toggleCountryList}
         className=" relative flex items-center justify-center rounded-full"
       >
-        <LazyLoad>
-          <div
-            className="mx-2"
-            style={{
-              position: 'relative',
-              backgroundColor: '#f7f7fa',
-              paddingBottom: '25px',
-              width: '25px',
-              borderRadius: '50%',
-            }}
-          >
-            <div className="absolute top-0 left-0">
-              <img
-                src={`${process.env.REACT_APP_IMAGES_URL}/small/${deliveryCountry?.flag.link}`}
-                alt=""
-              />
-            </div>
-          </div>
-        </LazyLoad>
+        <img src={flags[deliveryCountry]} className="w-25p h-25p" alt="uae" />
       </button>
 
       <AnimatePresence>
@@ -86,57 +54,38 @@ export default function DeliverTo() {
             animate="visible"
             exit="exited"
             ref={countryListRef}
-            className={`${locale}-deliver-to__mobile rounded font-semibold 
-              
-               bg-second-nav-text-light text-second-nav-dark
-               
-            `}
+            className={`${locale}-deliver-to__mobile rounded font-semibold ${
+              isLightTheme
+                ? 'bg-second-nav-text-light text-second-nav-dark'
+                : 'bg-second-nav-dark text-second-nav-text-dark'
+            }`}
           >
             <h1 className="p-2 text-center text-sm">
               {formatMessage({ id: 'deliver-to' })}
             </h1>
             <hr />
-            {deliveryCountries.map(country => {
+            {countries.map(country => {
               return (
                 <button
-                  key={country.id}
+                  key={country}
                   onClick={() => {
-                    handleChangeDeliveryCountry(country);
+                    setDeliveryCountry(country);
                     toggleCountryList();
                   }}
                   className=" flex p-2  items-center w-full font-semibold text-xs "
                 >
                   <input
                     type="checkbox"
-                    className="form-checkbox rounded-full text-main-color mx-1"
+                    className="form-checkbox rounded-full text-red-500 mx-1"
                     checked={deliveryCountry === country}
                     readOnly={true}
                   />
-                  <div className="flex">
-                    <LazyLoad>
-                      <div
-                        className="mx-2"
-                        style={{
-                          position: 'relative',
-                          backgroundColor: '#f7f7fa',
-                          paddingBottom: '25px',
-                          width: '25px',
-                          borderRadius: '50%',
-                        }}
-                      >
-                        <div className="absolute top-0 left-0">
-                          <img
-                            src={`${process.env.REACT_APP_IMAGES_URL}/small/${country.flag.link}`}
-                            alt={country.code}
-                          />
-                        </div>
-                      </div>
-                    </LazyLoad>
-
-                    <h1 className="text-xs">
-                      {country.translation[locale].name}
-                    </h1>
-                  </div>
+                  <img
+                    src={flags[country]}
+                    className="w-25p h-25p mx-2 "
+                    alt="uae"
+                  />
+                  <h1 className="uppercase">{country}</h1>
                 </button>
               );
             })}

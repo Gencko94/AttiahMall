@@ -1,22 +1,15 @@
 import { motion } from 'framer-motion';
 import React from 'react';
-import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
-import Ink from 'react-ink';
 import { useIntl } from 'react-intl';
-import Loader from 'react-loader-spinner';
-import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
-import { Link } from 'react-router-dom';
+import { MoonLoader } from 'react-spinners';
 
 export default function CartItemMobile({
   item,
-  handleRemoveItemFromCart,
+  handleRemoveItem,
   EditItemFromCart,
-  removefromCartButtonLoading,
-  wishlistItems,
-  handleRemoveItemFromWishlist,
-  handleAddItemToWishlist,
+  removeButtonLoading,
 }) {
-  const { formatMessage, locale } = useIntl();
+  const { formatMessage } = useIntl();
   const variant = {
     hidden: {
       opacity: 0,
@@ -43,24 +36,19 @@ export default function CartItemMobile({
       className="border-b "
     >
       <div className="py-2 cart__item-mobile">
-        <Link to={`/${locale}/item/${item.id}}`}>
-          <img
-            className=""
-            src={`${process.env.REACT_APP_IMAGES_URL}/small/${item.image}`}
-            alt={`${item[`name_${locale}`]}`}
-          />
-        </Link>
+        <img
+          className=""
+          style={{ maxHeight: '', maxWidth: '' }}
+          src={item.photo}
+          alt={item.name}
+        />
         <div className="text-sm">
-          <Link to={`/${locale}/item/${item.id}}`}>
-            <h1 className="font-semibold text-base ">{`${
-              item[`name_${locale}`]
-            }`}</h1>
-          </Link>
+          <h1 className="font-semibold ">{item.name}</h1>
           <h1 className=" font-semibold text-green-700">
             {formatMessage({ id: 'in-stock' })}
           </h1>
           <div className="text-red-700 font-bold text-base">
-            {item.price * item.qty} SAR
+            {item.price * item.quantity} SAR
           </div>
           <div className=" flex items-center ">
             <h1 className=" font-semibold">
@@ -81,25 +69,16 @@ export default function CartItemMobile({
       <div className="flex justify-center text-sm  items-center my-2 ">
         <button
           onClick={() => {
-            handleRemoveItemFromCart(item.id, item.cart_id);
+            handleRemoveItem(item.id);
           }}
           className={`${
-            removefromCartButtonLoading === item.id
-              ? 'bg-gray-300'
-              : 'bg-main-color'
-          }  text-main-text text-sm flex items-center relative justify-center flex-1 p-2 rounded uppercase  font-semibold`}
+            removeButtonLoading === item.id ? 'bg-gray-300' : 'bg-main-color'
+          }  text-main-text text-sm flex items-center justify-center flex-1 p-2 rounded  font-semibold`}
         >
-          {removefromCartButtonLoading === item.id ? (
-            <Loader
-              type="ThreeDots"
-              color="#b72b2b"
-              height={22}
-              width={22}
-              visible={true}
-            />
+          {removeButtonLoading === item.id ? (
+            <MoonLoader size={18} color="#b72b2b" />
           ) : (
             <>
-              <Ink background={true} />
               <h1 className="mx-2 whitespace-no-wrap">
                 {formatMessage({ id: 'remove-from-cart' })}
               </h1>
@@ -107,26 +86,10 @@ export default function CartItemMobile({
           )}
         </button>
         <button
-          onClick={() => {
-            if (wishlistItems.includes(item.id)) {
-              handleRemoveItemFromWishlist(item.id);
-            } else {
-              handleAddItemToWishlist(item);
-            }
-          }}
-          className={`
-              border mx-2
-            text-sm p-2 rounded-full uppercase bg-gray-100  flex items-center justify-center font-semibold`}
+          onClick={() => handleRemoveItem(item.id)}
+          className="p-2 flex-1  text-sm border border-main-color text-main-color  rounded font-semibold mx-2  "
         >
-          {wishlistItems.includes(item.id) ? (
-            <AiFillHeart
-              className={`w-25p h-25p hover:scale-125 text-main-color  transition-all duration-150 `}
-            />
-          ) : (
-            <AiOutlineHeart
-              className={`w-25p h-25p hover:scale-125 text-main-color  transition-all duration-150 `}
-            />
-          )}
+          {formatMessage({ id: 'add-to-wishlist' })}
         </button>
       </div>
     </motion.div>

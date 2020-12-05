@@ -4,9 +4,7 @@ import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
 import { useIntl } from 'react-intl';
 import Rating from 'react-rating';
 import { Link } from 'react-router-dom';
-import Loader from 'react-loader-spinner';
-import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
-import LazyImage from '../../helpers/LazyImage';
+import { MoonLoader } from 'react-spinners';
 
 export default function WishListItem({
   item,
@@ -15,7 +13,6 @@ export default function WishListItem({
   addToCartButtonLoading,
   handleAddToCart,
   handleRemoveFromCart,
-  cartItems,
 }) {
   const { formatMessage, locale } = useIntl();
   const variant = {
@@ -44,25 +41,28 @@ export default function WishListItem({
       exit="exited"
       className="wishlist-item"
     >
-      <Link to={`/${locale}/item/${item.id}}`}>
-        <LazyImage
-          src={`${process.env.REACT_APP_IMAGES_URL}/original/${item.image}`}
-          alt={`${item[`name_${locale}`]}`}
-          pb="calc(100% * 286/210)"
-        />
-        {/* <img
-          className=""
-          src={`${process.env.REACT_APP_IMAGES_URL}/small/${item.image}`}
-          alt={`${item[`name_${locale}`]}`}
-        /> */}
+      <Link
+        to={`/${locale}/${item.category.replace(
+          /\s|%|,/g,
+          '-'
+        )}/${item.name.replace(/\s|%|,|-/g, '-')}/${item.id}`}
+      >
+        <img className="" src={item.photo} alt={item.name} />
       </Link>
       <div className="">
-        <Link to={`/${locale}/item/${item.id}}`}>
-          <h1 className="font-semibold ">{`${item[`name_${locale}`]}`}</h1>
+        <Link
+          to={`/${locale}/${item.category.replace(
+            /\s|%|,/g,
+            '-'
+          )}/${item.name.replace(/\s|%|,|-/g, '-')}/${item.id}`}
+        >
+          <h1 className="font-semibold ">{item.name}</h1>
         </Link>
-
+        <h1 className=" font-semibold text-sm mb-1 text-green-700">
+          {formatMessage({ id: 'in-stock' })}
+        </h1>
         <Rating
-          initialRating={4.5}
+          initialRating={item.rating}
           readonly
           emptySymbol={<AiOutlineStar className="text-main-color" />}
           fullSymbol={<AiFillStar className="text-main-color" />}
@@ -86,13 +86,7 @@ export default function WishListItem({
             style={{ width: '200px' }}
           >
             {removeFromWishListButtonLoading === item.id ? (
-              <Loader
-                type="ThreeDots"
-                color="#b72b2b"
-                height={20}
-                width={20}
-                visible={true}
-              />
+              <MoonLoader size={18} color="#b72b2b" />
             ) : (
               <>
                 <h1 className="mx-2 whitespace-no-wrap">
@@ -104,30 +98,24 @@ export default function WishListItem({
 
           <button
             onClick={() => {
-              if (cartItems.includes(item.id)) {
+              if (item.itemInCart) {
                 handleRemoveFromCart(item.id);
               } else {
                 handleAddToCart(item);
               }
             }}
             className={`${
-              addToCartButtonLoading === item.id
+              addToCartButtonLoading
                 ? 'bg-gray-300'
-                : cartItems.includes(item.id)
+                : item.itemInCart
                 ? 'bg-main-color'
                 : 'bg-green-700'
             }  text-main-text   p-2 rounded flex items-center justify-center mx-2 font-semibold uppercase`}
             style={{ width: '200px' }}
           >
-            {addToCartButtonLoading === item.id ? (
-              <Loader
-                type="ThreeDots"
-                color="#b72b2b"
-                height={20}
-                width={20}
-                visible={true}
-              />
-            ) : cartItems.includes(item.id) ? (
+            {addToCartButtonLoading ? (
+              <MoonLoader size={19} color="#b72b2b" />
+            ) : item.itemInCart ? (
               <>
                 <h1 className="mx-2 whitespace-no-wrap">
                   {formatMessage({ id: 'remove-from-cart' })}

@@ -1,39 +1,77 @@
 import React from 'react';
+import Slider from 'react-slick';
 
+import { DataProvider } from '../../contexts/DataContext';
 import { useMediaQuery } from 'react-responsive';
 import ContentLoader from 'react-content-loader';
 import { useQuery } from 'react-query';
-import { getMainCarouselItems } from '../../Queries/Queries';
-import { useIntl } from 'react-intl';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import SwiperCore, { Pagination } from 'swiper';
-import 'swiper/swiper-bundle.css';
-import LazyImage from '../../helpers/LazyImage';
-SwiperCore.use([Pagination]);
 const MainCarousel = () => {
+  const { getMainCarouselItems } = React.useContext(DataProvider);
   const isTabletOrAbove = useMediaQuery({ query: '(min-width: 668px)' });
-  const { locale } = useIntl();
+
   const { data, isLoading } = useQuery(
     ['mainCarousel', isTabletOrAbove],
-    getMainCarouselItems,
+    async (key, desktop) => {
+      if (desktop) {
+        const res = await getMainCarouselItems('desktop');
+        return res;
+      } else {
+        const res = await getMainCarouselItems('mobile');
+        return res;
+      }
+    },
     { refetchOnWindowFocus: false, retry: true }
   );
+
+  const settings = {
+    className: '',
+    dots: true,
+    centerMode: true,
+    centerPadding: '50px',
+    arrows: false,
+    infinite: true,
+    autoplay: true,
+    autoplaySpeed: 5000,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          centerMode: false,
+        },
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          centerMode: false,
+        },
+      },
+      {
+        breakpoint: 360,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          centerMode: false,
+        },
+      },
+    ],
+  };
+
   return (
     <div className="my-6 bg-body-light">
-      <Swiper
-        pagination={{ clickable: true, dynamicBullets: true }}
-        id="main"
-        spaceBetween={0}
-      >
+      <Slider className="bg-body-light" {...settings}>
         {isLoading &&
           [0, 1, 2].map(i => {
             return (
-              <SwiperSlide key={i} className="">
+              <div key={i} className="px-1">
                 <ContentLoader
                   speed={4}
-                  viewBox={`0 0 ${isTabletOrAbove ? '1440' : '800'} ${
-                    isTabletOrAbove ? '300' : '300'
-                  }`}
+                  viewBox={`0 0 900 ${isTabletOrAbove ? '185' : '340'}`}
                   backgroundColor="#f3f3f3"
                   foregroundColor="#ecebeb"
                 >
@@ -43,31 +81,25 @@ const MainCarousel = () => {
                     rx="5"
                     ry="5"
                     width="100%"
-                    height={`${isTabletOrAbove ? '300' : '300'}`}
+                    height={`${isTabletOrAbove ? '185' : '340'}`}
                   />
                 </ContentLoader>
-              </SwiperSlide>
+              </div>
             );
           })}
         {!isLoading &&
           data.map(item => {
             return (
-              <SwiperSlide key={item.id}>
-                <a href={`/categories/${item.category.slug}`} className="">
-                  <LazyImage
-                    src={`${process.env.REACT_APP_IMAGES_URL}/original/${item.translation[locale].image.link}`}
-                    alt="something"
-                    pb={`${
-                      isTabletOrAbove
-                        ? 'calc(100% * 300/1440)'
-                        : 'calc(100% * 300/800)'
-                    }`}
-                  />
-                </a>
-              </SwiperSlide>
+              <div key={item} className="px-0 md:px-1">
+                <img
+                  src={item.src}
+                  alt="something"
+                  className=" md:rounded w-full h-full "
+                />
+              </div>
             );
           })}
-      </Swiper>
+      </Slider>
     </div>
   );
 };

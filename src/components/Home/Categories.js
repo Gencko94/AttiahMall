@@ -1,54 +1,64 @@
 import React from 'react';
 import { DataProvider } from '../../contexts/DataContext';
+import Slider from 'react-slick';
 // import { useMediaQuery } from 'react-responsive';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import SwiperCore, { Navigation } from 'swiper';
-import 'swiper/swiper-bundle.css';
+// import MultiClamp from 'react-multi-clamp';
 import ContentLoader from 'react-content-loader';
-import { useIntl } from 'react-intl';
-SwiperCore.use([Navigation]);
+import { useQuery } from 'react-query';
+import { BsChevronLeft, BsChevronRight } from 'react-icons/bs';
 export default function Categories() {
-  const { categories, categoriesLoading } = React.useContext(DataProvider);
+  const { getHomePageCategories } = React.useContext(DataProvider);
   // const isTabletOrAbove = useMediaQuery({ query: '(min-width: 768px)' });
-  const { locale } = useIntl();
+  const { data, isLoading } = useQuery(
+    'sliderCategories',
+    async () => {
+      return await getHomePageCategories();
+    },
+    { retry: true }
+  );
   // const isMobile = useMediaQuery({ query: '(min-width: 360px)' });
+  const settings = {
+    className: '',
+    autoplay: true,
+    autoplaySpeed: 3000,
+    infinite: true,
+    slidesToShow: 9,
+    slidesToScroll: 5,
+    nextArrow: <RightArrow />,
+    prevArrow: <LeftArrow />,
 
-  const breakpoints = {
-    // when window width is >= 320px
-    320: {
-      slidesPerView: 2,
-      spaceBetween: 20,
-    },
-    // when window width is >= 480px
-    480: {
-      slidesPerView: 3,
-      spaceBetween: 20,
-    },
-    // when window width is >= 640px
-    640: {
-      slidesPerView: 4,
-      spaceBetween: 20,
-    },
-    860: {
-      slidesPerView: 5,
-      spaceBetween: 20,
-    },
-    1100: {
-      slidesPerView: 7,
-      spaceBetween: 20,
-    },
-    1440: {
-      slidesPerView: 8,
-      spaceBetween: 20,
-    },
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 5,
+          slidesToScroll: 5,
+        },
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 4,
+        },
+      },
+      {
+        breakpoint: 320,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 3,
+        },
+      },
+    ],
   };
+
   return (
     <div className="my-3 text-body-text-light px-2">
-      <Swiper navigation id="main" spaceBetween={10} breakpoints={breakpoints}>
-        {categoriesLoading &&
+      <Slider className="" {...settings}>
+        {isLoading &&
           [0, 1, 2, 3, 4, 5, 6, 7, 8].map(i => {
             return (
-              <SwiperSlide key={i} className="overflow-hidden ">
+              <div key={i} className="px-1 overflow-hidden ">
                 <ContentLoader
                   speed={2}
                   viewBox="0 0 400 500"
@@ -57,26 +67,44 @@ export default function Categories() {
                 >
                   <circle cx="50%" cy="50%" r="200" width="100%" />
                 </ContentLoader>
-              </SwiperSlide>
+              </div>
             );
           })}
-        {categories &&
-          categories.map(item => {
+        {!isLoading &&
+          data.map((item, i) => {
             return (
-              <SwiperSlide key={item.id} className="rounded-full">
+              <div key={i} className="px-">
                 <div className="  overflow-hidden  relative ">
-                  <a href={`/${locale}/categories/${item.slug}`}>
-                    <img
-                      src={`${process.env.REACT_APP_IMAGES_URL}/original/${item.image.link}`}
-                      alt="something"
-                      className=" h-auto w-full "
-                    />
-                  </a>
+                  <img
+                    src={item.url}
+                    alt="something"
+                    className=" h-auto w-full "
+                  />
                 </div>
-              </SwiperSlide>
+              </div>
             );
           })}
-      </Swiper>
+      </Slider>
     </div>
   );
 }
+const RightArrow = ({ onClick }) => {
+  return (
+    <button
+      className="items-slider__next-button hover:bg-gray-300  rounded       bg-white transition duration-150 shadow-2xl border border-gray-300"
+      onClick={onClick}
+    >
+      <BsChevronRight className="w-5 h-5" />
+    </button>
+  );
+};
+const LeftArrow = ({ onClick }) => {
+  return (
+    <button
+      className=" items-slider__prev-button hover:bg-gray-300 rounded     bg-white transition-colors duration-150 shadow-2xl border border-gray-300"
+      onClick={onClick}
+    >
+      <BsChevronLeft className="w-5 h-5" />
+    </button>
+  );
+};

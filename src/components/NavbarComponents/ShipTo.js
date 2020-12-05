@@ -5,28 +5,26 @@ import { BiCaretDown } from 'react-icons/bi';
 import { useIntl } from 'react-intl';
 import { DataProvider } from '../../contexts/DataContext';
 import useClickAway from '../../hooks/useClickAway';
-import Loader from 'react-loader-spinner';
-import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
-import LazyLoad from 'react-lazyload';
 export default function ShipTo() {
   const {
     deliveryCountry,
-    deliveryCountries,
-    deliveryCountriesLoading,
     setDeliveryCountry,
+    flags,
+    countries,
   } = React.useContext(DataProvider);
 
   const [countryListOpen, setCountryListOpen] = React.useState(false);
   const countryListRef = React.useRef(null);
   useClickAway(countryListRef, () => {
     if (countryListOpen) {
+      countryListRef.current.classList.replace('scale-100', 'scale-0');
       setCountryListOpen(false);
     }
   });
   const toggleCountryList = () => {
     setCountryListOpen(!countryListOpen);
   };
-  const { formatMessage, locale } = useIntl();
+  const { formatMessage } = useIntl();
 
   const countryListVariants = {
     hidden: {
@@ -34,9 +32,6 @@ export default function ShipTo() {
     },
     visible: {
       height: 'auto',
-      transition: {
-        type: 'tween',
-      },
     },
     exited: {
       opacity: 0,
@@ -45,64 +40,22 @@ export default function ShipTo() {
       },
     },
   };
-  const handleChangeDeliveryCountry = country => {
-    localStorage.setItem(
-      'deliveryCountry',
-      JSON.stringify({
-        deliveryCountry: {
-          en: country.translation.en.name,
-          ar: country.translation.ar.name,
-        },
-      })
-    );
-    setDeliveryCountry(country);
-  };
   return (
     <div className="relative">
-      {deliveryCountriesLoading && (
-        <div className="p-1">
-          <Loader
-            type="ThreeDots"
-            color="#fff"
-            secondaryColor="black"
-            height={20}
-            width={20}
-            visible={true}
-          />
-        </div>
-      )}
-      {!deliveryCountriesLoading && (
-        <button
-          onClick={toggleCountryList}
-          className=" p-1 flex items-center rounded hover:bg-main-color  transition duration-100"
-        >
-          <h1 className="text-sm uppercase ">
-            {formatMessage({ id: 'nav.shipTo' })}
-          </h1>
-          <LazyLoad>
-            <div
-              className="mx-2"
-              style={{
-                position: 'relative',
-                backgroundColor: '#f7f7fa',
-                paddingBottom: '20px',
-                width: '20px',
-                borderRadius: '50%',
-              }}
-            >
-              <div className="absolute top-0 left-0">
-                <img
-                  src={`${process.env.REACT_APP_IMAGES_URL}/small/${deliveryCountry.flag.link}`}
-                  alt=""
-                />
-              </div>
-            </div>
-          </LazyLoad>
-
-          <BiCaretDown />
-        </button>
-      )}
-
+      <button
+        onClick={toggleCountryList}
+        className=" p-1 flex items-center rounded hover:bg-main-color  transition duration-100"
+      >
+        <h1 className="text-sm uppercase ">
+          {formatMessage({ id: 'nav.shipTo' })}
+        </h1>
+        <img
+          src={flags[deliveryCountry]}
+          className="w-20p h-20p mx-2 "
+          alt="uae"
+        />
+        <BiCaretDown />
+      </button>
       <AnimatePresence>
         {countryListOpen && (
           <motion.div
@@ -113,48 +66,28 @@ export default function ShipTo() {
             ref={countryListRef}
             className="deliver-to__desktop text-body-text-light font-semibold   bg-gray-100"
           >
-            {deliveryCountries.map(country => {
+            {countries.map(country => {
               return (
                 <button
-                  key={country.id}
+                  key={country}
                   onClick={() => {
-                    handleChangeDeliveryCountry(country);
+                    setDeliveryCountry(country);
                     toggleCountryList();
                   }}
-                  className={`p-4 text-sm flex w-full uppercase items-center font-semibold  text-nav-primary hover:bg-main-color hover:text-main-text`}
+                  className={`py-2 flex px-1 uppercase items-center font-semibold  w-full text-nav-primary hover:bg-second-nav-light hover:text-second-nav-text-light`}
                 >
                   <input
                     type="checkbox"
-                    className="form-checkbox rounded-full text-main-color mx-1"
-                    checked={
-                      deliveryCountry.translation[locale].name ===
-                      country.translation[locale].name
-                    }
+                    className="form-checkbox rounded-full text-red-500 mx-1"
+                    checked={deliveryCountry === country}
                     readOnly={true}
                   />
-                  <div className="flex">
-                    <LazyLoad>
-                      <div
-                        className="mx-2"
-                        style={{
-                          position: 'relative',
-                          backgroundColor: '#f7f7fa',
-                          paddingBottom: '20px',
-                          width: '20px',
-                          borderRadius: '50%',
-                        }}
-                      >
-                        <div className="absolute top-0 left-0">
-                          <img
-                            src={`${process.env.REACT_APP_IMAGES_URL}/small/${country.flag.link}`}
-                            alt={country.code}
-                          />
-                        </div>
-                      </div>
-                    </LazyLoad>
-
-                    <h1>{country.translation[locale].name}</h1>
-                  </div>
+                  <img
+                    src={flags[country]}
+                    className="w-20p h-20p mx-2 "
+                    alt="uae"
+                  />
+                  <h1>{country}</h1>
                 </button>
               );
             })}

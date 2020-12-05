@@ -5,8 +5,7 @@ import OrderMobile from './MyOrdersMobile/OrderMobile';
 import OrderDetailsMobile from './MyOrdersMobile/OrderDetailsMobile';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useQuery } from 'react-query';
-import Loader from 'react-loader-spinner';
-import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
+import { BeatLoader } from 'react-spinners';
 export default function MyOrdersMobile() {
   const { getOrderedItems, isLightTheme } = React.useContext(DataProvider);
   const [orderDetailsOpen, setOrderDetailsOpen] = React.useState(false);
@@ -49,15 +48,9 @@ export default function MyOrdersMobile() {
     return (
       <div
         className="flex  justify-center items-center"
-        style={{ minHeight: 'calc(-176px + 100vh)' }}
+        style={{ minHeight: 'calc(-120px + 100vh)' }}
       >
-        <Loader
-          type="ThreeDots"
-          color="#b72b2b"
-          height={40}
-          width={40}
-          visible={isLoading}
-        />
+        <BeatLoader size={10} color={'#b72b2b'} />
       </div>
     );
   return (
@@ -68,7 +61,7 @@ export default function MyOrdersMobile() {
         animate="visible"
         exit="exit"
         className=""
-        style={{ minHeight: 'calc(-176px + 100vh)' }}
+        style={{ minHeight: 'calc(-120px + 100vh)' }}
       >
         {data.length === 0 ? (
           <NoOrdersMobile />

@@ -1,18 +1,18 @@
 import React from 'react';
 import { useMediaQuery } from 'react-responsive';
-
-import Desktop from './Layouts/Desktop';
-import Mobile from './Layouts/Mobile';
+import Footer from './Footer';
+import MobileFooter from './MobileFooter';
+import MobileNavbar from './MobileNavbar';
+import Navbar from './Navbar';
 
 export default function Layout({ children }) {
   const isTabletOrAbove = useMediaQuery({ query: '(min-width: 768px)' });
+
   return (
     <>
-      {isTabletOrAbove ? (
-        <Desktop children={children} />
-      ) : (
-        <Mobile children={children} />
-      )}
+      {isTabletOrAbove ? <Navbar /> : <MobileNavbar />}
+      {children}
+      {isTabletOrAbove ? <Footer /> : <MobileFooter />}
     </>
   );
 }

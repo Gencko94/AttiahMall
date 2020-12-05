@@ -1,66 +1,79 @@
 import React from 'react';
-import Loader from 'react-loader-spinner';
-import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
+import { BeatLoader } from 'react-spinners';
+import { DataProvider } from '../../contexts/DataContext';
 import GoogleMapsAddress from '../GoogleMapsAddress';
 import Locations from './MyAddresses/Locations';
 import NoAddresses from './MyAddresses/NoAddresses';
 import { useQuery, useMutation, queryCache } from 'react-query';
 import { motion } from 'framer-motion';
-import {
-  addUserAddress,
-  getUserAddresses,
-  removeUserAddress,
-} from '../../Queries/Queries';
 
 export default function MyAddresses() {
   const [showMap, setShowMap] = React.useState(false);
+  const {
+    getUserLocations,
+    handleAddLocation,
+    handleRemoveLocation,
+    isLightTheme,
+  } = React.useContext(DataProvider);
 
   /* Main Fetching */
   const { isLoading, data, refetch, isError } = useQuery(
     'addresses',
-    getUserAddresses,
-    { refetchOnWindowFocus: false, retry: true }
+    async () => {
+      const res = await getUserLocations();
+      return res.locations;
+    },
+    { refetchOnWindowFocus: false }
   );
 
   /* Add Mutation */
   const [addMutation] = useMutation(
-    addUserAddress,
-
+    async location => {
+      const res = await handleAddLocation(location);
+      if (res.message === 'ok') {
+        return res.newLocation;
+      }
+    },
     {
-      onSuccess: data => {
-        console.log('success');
-        queryCache.setQueryData('addresses', () => {
-          return data;
+      onSuccess: newLocation => {
+        queryCache.setQueryData('addresses', prev => {
+          return [...prev, newLocation];
         });
         refetch();
 
         setShowMap(false);
       },
-      throwOnError: true,
     }
   );
 
   /* Delete Mutation */
-  const [deleteMutation] = useMutation(removeUserAddress, {
-    onSuccess: id => {
-      queryCache.setQueryData('addresses', prev => {
-        return prev.map(item => item.id !== id);
-      });
-      refetch();
-
-      setShowMap(false);
+  const [deleteMutation] = useMutation(
+    async location => {
+      const res = await handleRemoveLocation(location);
+      if (res.message === 'ok') {
+        return res.locations;
+      }
     },
-    throwOnError: true,
-  });
+    {
+      onSuccess: locations => {
+        queryCache.setQueryData('addresses', () => {
+          return locations;
+        });
+        refetch();
+
+        setShowMap(false);
+      },
+    }
+  );
 
   if (isError) {
     return (
       <div
-        className={`rounded-lg overflow-hidden 
-       
-          shadow-itemsSlider-shallow
-            
-        `}
+        className={`rounded-lg overflow-hidden ${
+          isLightTheme
+            ? 'shadow-itemsSlider-shallow'
+            : 'shadow-itemsSlider-wide'
+        }`}
       >
         <div className="flex h-full justify-center items-center font-semibold">
           <h1>Oops, Something Went Wrong</h1>
@@ -89,13 +102,7 @@ export default function MyAddresses() {
   if (isLoading)
     return (
       <div className="flex h-full justify-center items-center">
-        <Loader
-          type="ThreeDots"
-          color="#b72b2b"
-          height={40}
-          width={40}
-          visible={isLoading}
-        />
+        <BeatLoader size={10} color={'#b72b2b'} />
       </div>
     );
   return (
@@ -106,9 +113,10 @@ export default function MyAddresses() {
       exit="exit"
       className="h-full"
     >
-      {!showMap &&
+      {!isLoading &&
+        !showMap &&
         (data.length === 0 ? (
-          <NoAddresses setShowMap={setShowMap} />
+          <NoAddresses isLightTheme={isLightTheme} setShowMap={setShowMap} />
         ) : (
           <Locations
             locations={data}

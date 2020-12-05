@@ -6,39 +6,38 @@ import CartItem from './CartItem';
 import CartContainerLoader from './loaders/CartContainerLoader';
 
 export default function CartContainer({
-  cartItemsLoading,
-  cartItems,
+  isLoading,
+  data,
   removefromCartButtonLoading,
   handleRemoveItemFromCart,
   handleAddItemToWishlist,
   handleRemoveItemFromWishlist,
-  cartTotal,
-  wishlistItems,
+  addToWishListButtonLoading,
 }) {
   const resolvePlural = () => {
-    switch (cartItems.length) {
+    switch (data.cartItems.length) {
       case 1:
         return formatMessage({ id: 'one-item' });
 
       case 2:
         return formatMessage({ id: 'two-items' });
 
-      case cartItems.length > 10:
+      case data.cartItems.length > 10:
         return formatMessage({ id: 'one-items' });
       default:
         return formatMessage({ id: 'multiple-items' });
     }
   };
   const { formatMessage, locale } = useIntl();
-  if (cartItemsLoading) {
+  if (isLoading) {
     return <CartContainerLoader locale={locale} />;
   }
   return (
     <div className="">
       <AnimatePresence>
-        {cartItems.length === 0 && <CartEmpty />}
+        {data.cartItems.length === 0 && <CartEmpty />}
       </AnimatePresence>
-      {cartItems.length !== 0 && (
+      {data.cartItems.length !== 0 && (
         <>
           <div className="cart-grid-titles font-semibold text-lg">
             <div></div>
@@ -54,7 +53,7 @@ export default function CartContainer({
               className=" grid grid-cols-1 gap-2"
             >
               <AnimatePresence>
-                {cartItems.map(item => {
+                {data.cartItems.map(item => {
                   return (
                     <CartItem
                       key={item.id}
@@ -65,7 +64,7 @@ export default function CartContainer({
                         handleRemoveItemFromWishlist
                       }
                       handleAddItemToWishlist={handleAddItemToWishlist}
-                      wishlistItems={wishlistItems}
+                      addToWishListButtonLoading={addToWishListButtonLoading}
                     />
                   );
                 })}
@@ -80,11 +79,11 @@ export default function CartContainer({
               <h1 className="mx-1 whitespace-no-wrap ">
                 (
                 {locale === 'ar'
-                  ? cartItems.length > 2 && cartItems.length
-                  : `${cartItems.length} `}
+                  ? data.cartItems.length > 2 && data.cartItems.length
+                  : `${data.cartItems.length} `}
                 {resolvePlural()})
               </h1>
-              <h1>{cartTotal}</h1> KD
+              <h1>{data.cartTotal}</h1> KD
             </motion.div>
             <motion.div layout className="text-sm my-4">
               <h1>{formatMessage({ id: 'cart-tos' })}</h1>

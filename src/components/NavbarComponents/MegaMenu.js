@@ -2,8 +2,8 @@ import { motion } from 'framer-motion';
 import React from 'react';
 import { useIntl } from 'react-intl';
 
-export default function MegaMenu({ data }) {
-  const { formatMessage, locale } = useIntl();
+export default function MegaMenu({ data, isLightTheme }) {
+  const { formatMessage } = useIntl();
   const containerVariants = {
     hidden: {
       opacity: 0,
@@ -37,40 +37,44 @@ export default function MegaMenu({ data }) {
       animate="visible"
       initial="hidden"
       exit="exited"
-      className={`absolute z-20  top-100 left-0 w-full max-w-default overflow-hidden  cursor-default 
-       
-          bg-white text-nav-cat-text-light
-         
-       `}
+      className={`absolute z-20  top-100 left-0 w-full max-w-default overflow-hidden  cursor-default ${
+        isLightTheme
+          ? 'bg-white text-nav-cat-text-light'
+          : 'bg-second-nav-dark text-nav-cat-text-dark'
+      } `}
     >
-      <div className="p-3 pt-4 w-full">
-        <div className={`flex`}>
-          <motion.div
-            variants={childVariants}
-            className="  flex flex-col"
-            style={{ flexBasis: '15%' }}
+      {data && (
+        <div className="p-3 pt-4 w-full">
+          <div
+            className={`
+             flex   `}
           >
-            <h1 className="font-semibold mb-2 ">
-              {formatMessage({ id: 'categories' })}
-            </h1>
-            <div className="flex flex-col">
-              {data.children.map(subCategory => (
-                <h1 key={subCategory.id} className="mb-2 text-sm">
-                  {subCategory.translation[locale].name}
-                </h1>
-              ))}
-            </div>
-          </motion.div>
-          <motion.div
-            variants={childVariants}
-            className=" pl-4"
-            style={{ flexBasis: '35%' }}
-          >
-            <h1 className="font-semibold mb-2 ">
-              {formatMessage({ id: 'top-brands' })}
-            </h1>
+            <motion.div
+              variants={childVariants}
+              className="  flex flex-col"
+              style={{ flexBasis: '15%' }}
+            >
+              <h1 className="font-semibold mb-2 ">
+                {formatMessage({ id: 'categories' })}
+              </h1>
+              <div className="flex flex-col">
+                {data.subCategories.map((subCategory, i) => (
+                  <h1 key={i} className="mb-2 text-sm">
+                    {subCategory}
+                  </h1>
+                ))}
+              </div>
+            </motion.div>
+            <motion.div
+              variants={childVariants}
+              className=" pl-4"
+              style={{ flexBasis: '35%' }}
+            >
+              <h1 className="font-semibold mb-2 ">
+                {formatMessage({ id: 'top-brands' })}
+              </h1>
 
-            {/* <div className="nav-category-brands__grid">
+              <div className="nav-category-brands__grid">
                 {data.brands.map((img, i) => (
                   <img
                     src={img}
@@ -79,25 +83,26 @@ export default function MegaMenu({ data }) {
                     className="border rounded-sm"
                   />
                 ))}
-              </div> */}
-          </motion.div>
-          <motion.div
-            variants={childVariants}
-            className="   pl-4 w-full "
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 0.5fr',
-              flexBasis: '50%',
-            }}
-          >
-            {/* {data.images.map((img, i) => (
+              </div>
+            </motion.div>
+            <motion.div
+              variants={childVariants}
+              className="   pl-4 w-full "
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 0.5fr',
+                flexBasis: '50%',
+              }}
+            >
+              {data.images.map((img, i) => (
                 <div key={i} className=" mr-2 ">
                   <img className="" src={img} alt="hi" key={i} />
                 </div>
-              ))} */}
-          </motion.div>
+              ))}
+            </motion.div>
+          </div>
         </div>
-      </div>
+      )}
     </motion.div>
   );
 }

@@ -44,7 +44,7 @@ export default function OrderDetailsMobile({
       animate="visible"
       exit="exited"
       className="fixed top-0 left-0 right-0 bottom-0 overflow-y-scroll bg-body-light z-30 h-screen"
-      // style={{ overflowY: 'scroll !important' }}
+      style={{ overflowY: 'scroll !important' }}
     >
       <div className=" sticky top-0 p-3 flex items-center bg-main-color text-main-text z-1">
         <button
@@ -63,19 +63,19 @@ export default function OrderDetailsMobile({
       </div>
       {selectedOrder && (
         <div className="px-1 py-2 ">
-          <div className="mb-3 p-3 mx-1 rounded-lg flex bg-gray-900 text-main-text">
+          <div className="mb-3 p-3 rounded-lg flex bg-gray-900 text-main-text">
             <div className="flex-1">
               <div className="flex items-center font-bold">
                 <h1>{formatMessage({ id: 'order-number' })}</h1>
                 <h1 className="mx-1">{selectedOrder.orderNo}</h1>
               </div>
-              <div className="flex items-center text-sm">
+              <div className="flex items-center text-xs">
                 <h1 className="font-semibold  text-gray-600">
                   {formatMessage({ id: 'order-date' })} :
                 </h1>
                 <h1 className="mx-1">{selectedOrder.orderDate}</h1>
               </div>
-              <div className="flex items-center text-sm">
+              <div className="flex items-center text-xs">
                 <h1 className="text-gray-600">
                   {selectedOrder.delivered
                     ? formatMessage({ id: 'delivered-at' })
@@ -88,7 +88,7 @@ export default function OrderDetailsMobile({
                     : selectedOrder.expectedDelivery}
                 </h1>
               </div>
-              <div className="flex items-center text-sm">
+              <div className="flex items-center text-xs">
                 <h1 className="text-gray-600 ">
                   {selectedOrder.delivered
                     ? formatMessage({ id: 'delivered-to' })
@@ -97,16 +97,16 @@ export default function OrderDetailsMobile({
                 </h1>
                 <h1 className="mx-1">{selectedOrder.deliveryDestination}</h1>
               </div>
-              <div className="flex items-center text-sm">
+              <div className="flex items-center text-xs">
                 <h1 className="text-gray-600">
                   {formatMessage({ id: 'payment-method' })} :
                 </h1>
                 <h1 className="mx-1">Visa</h1>
               </div>
             </div>
-            <div className=" text-sm flex flex-col justify-center font-semibold">
+            <div className=" text-xs flex flex-col justify-center font-semibold">
               <div
-                className={` text-center uppercase px-2 py-1 rounded ${
+                className={`  uppercase px-2 py-1 rounded ${
                   selectedOrder.delivered ? 'bg-green-700' : 'bg-orange-600'
                 }`}
               >

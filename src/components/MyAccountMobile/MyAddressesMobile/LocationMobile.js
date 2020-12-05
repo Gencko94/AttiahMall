@@ -9,7 +9,7 @@ export default function LocationMobile({
   deleteButtonLoading,
 }) {
   const { formatMessage } = useIntl();
-
+  const key = 'AIzaSyAYprqr3Vrnmhwx9UQozUNNks7CVH9m3Xg';
   const cardVariants = {
     hidden: {
       opacity: 0,
@@ -34,21 +34,22 @@ export default function LocationMobile({
     >
       <div style={{ minHeight: '100px' }}>
         <img
-          src={`https://maps.googleapis.com/maps/api/staticmap?center=${data.lat},${data.lng}&zoom=15&size=150x100&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`}
+          src={`https://maps.googleapis.com/maps/api/staticmap?center=${data.lat},${data.lng}&zoom=15&size=150x100&key=${key}`}
           alt="thumbnail"
         />
       </div>
       <div className="p-2">
         <div className="text-sm mb-2 font-semibold" style={{ height: '63px' }}>
-          <h1>{data.marked_address}</h1>
+          <h1>{data.street}</h1>
+          <h1>{data.governate}</h1>
         </div>
         <button
-          onClick={() => handleRemoveLocation(data.id)}
+          onClick={() => handleRemoveLocation(data)}
           className={` ${
-            deleteButtonLoading === data.id ? 'bg-gray-300' : 'bg-main-color'
+            deleteButtonLoading === data.lat ? 'bg-gray-300' : 'bg-main-color'
           } text-main-text rounded   px-2 py-1 text-sm w-full flex justify-center`}
         >
-          {deleteButtonLoading === data.id ? (
+          {deleteButtonLoading === data.lat ? (
             <MoonLoader size={17} color="#b72b2b" />
           ) : (
             <h1>{formatMessage({ id: 'remove-location' })}</h1>
